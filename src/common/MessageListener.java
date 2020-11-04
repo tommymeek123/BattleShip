@@ -3,7 +3,7 @@ package common;
  * This interface represents &quot;observers&quot; of <code>MessageSource</code>s.
  *
  * @author Dr. William Kreahling
- * @version November 2017 
+ * @version November 2017
  */
 public interface MessageListener {
    /**
