@@ -44,11 +44,11 @@ public class BattleClient extends MessageSource implements MessageListener {
    public void connect() {
       try {
          Socket socket = new Socket(host, port);
-         ConnectionAgent ca = new ConnectionAgent(socket);
+         //ConnectionAgent ca = new ConnectionAgent(socket);
 
-         while(ca.isConnected()) {
+         //while(ca.isConnected()) {
 
-         }
+         //}
 
       }
       catch (IOException ieo) {
@@ -80,7 +80,7 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param message the message being sent
     */
    public void send(String message) {
-      ca.sendMessage(message);
+      //ca.sendMessage(message);
    }
 
    /**

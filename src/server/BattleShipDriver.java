@@ -11,7 +11,16 @@ public class BattleShipDriver {
     *             board.
     */
    public static void main(String[] args) {
-      go(args);
+      int num = 0;
+      try {
+         //num = Integer.parseInt(args[0]);
+         Game game = new Game(4);
+
+      }
+      catch (NumberFormatException nfe) {
+         System.out.println("Error");
+      }
+      //go(args);
    }
 
    /**
