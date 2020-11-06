@@ -11,16 +11,16 @@ public class BattleShipDriver {
     *             board.
     */
    public static void main(String[] args) {
-      int num = 0;
-      try {
-         //num = Integer.parseInt(args[0]);
-         Game game = new Game(4);
-
-      }
-      catch (NumberFormatException nfe) {
-         System.out.println("Error");
-      }
-      //go(args);
+//      int num = 0;
+//      try {
+//         //num = Integer.parseInt(args[0]);
+//         Game game = new Game(4);
+//
+//      }
+//      catch (NumberFormatException nfe) {
+//         System.out.println("Error");
+//      }
+      go(args);
    }
 
    /**
@@ -29,9 +29,10 @@ public class BattleShipDriver {
     * @param args Command line arguments from main.
     */
    private static void go(String[] args) {
-      validateArgs(args);
+      // validateArgs(args);
+      int boardSize = Integer.parseInt(args[0]);
+      Game game = new Game(boardSize);
    }
-
 
    /**
     * Ensures that the command line arguments are valid.

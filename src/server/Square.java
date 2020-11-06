@@ -2,7 +2,7 @@ package server;
 
 public class Square {
 
-    public Ship ship;
+    private Ship ship;
 
     public Square() {
         this.ship = Ship.EMPTY;
@@ -37,6 +37,16 @@ public class Square {
         return ship.shipSym();
     }
 
+    /**
+     * Returns the symbol associated with the ship in this square.
+     * If this square has no ship, a space is returned.
+     *
+     * @return a String representation of the ship on this square.
+     */
+    @Override
+    public String toString() {
+        return String.valueOf(this.ship.symbol);
+    }
 
     private enum Ship {
 
