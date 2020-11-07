@@ -56,9 +56,25 @@ public enum Ship {
    }
 
    /**
+    * Retrieves the ship with the specified id.
+    *
+    * @param id The id of the desired ship.
+    * @return The ship with the specified id.
+    */
+   public static Ship getById(int id) {
+      Ship ship = null;
+      for (Ship s : values()) {
+         if (s.id == id) {
+            ship = s;
+         }
+      }
+      return ship;
+   }
+
+   /**
     * Accessor for this Ship's length.
     *
-    * @return this Ship's length.
+    * @return This Ship's length.
     */
    public int getLength() {
       return this.length;
