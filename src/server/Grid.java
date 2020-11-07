@@ -18,7 +18,10 @@ public class Grid {
    private int size;
 
    /** An array containing all the squares of this grid. */
-   private Ship[][] grid;
+   private Ship[][] playerGrid;
+
+   /** An array containing all the squares of this grid. */
+   private Ship[][] opponentView;
 
    /** A list of all the ships on the grid. */
    private List<Ship> ships;
@@ -30,7 +33,13 @@ public class Grid {
     */
    public Grid(int size, int numShips) {
       this.size = size;
-      this.grid = new Ship[size][size];
+      this.opponentView = new Ship[size][size];
+      for (int i = 0; i < this.size; i++) {
+         for (int j = 0; j < this.size; j++) {
+            this.opponentView[i][j] = Ship.EMPTY;
+         }
+      }
+      this.playerGrid = new Ship[size][size];
       this.setUp(numShips);
    }
 
@@ -45,8 +54,8 @@ public class Grid {
       }
       for (int i = 0; i < this.size; i++) {
          for (int j = 0; j < this.size; j++) {
-            if (this.grid[i][j] == null) {
-               this.grid[i][j] = Ship.EMPTY;
+            if (this.playerGrid[i][j] == null) {
+               this.playerGrid[i][j] = Ship.EMPTY;
             }
          }
       }
@@ -65,29 +74,33 @@ public class Grid {
          int shipId = rand.nextInt(SHIP_TYPES) + 1; // between 1 and SHIP_TYPES
          boolean direction = rand.nextBoolean(); // true: vertical. false: horiz
          Ship ship = Ship.getById(shipId);
+
+         // Check left to right
          if (direction && this.size - i >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.grid[i+k][j] == null) {
+               if (this.playerGrid[i+k][j] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.grid[i+k][j] = ship;
+                  this.playerGrid[i+k][j] = ship;
                }
                placed = true;
             }
+
+            // Check up to down
          } else if (!direction && this.size - j >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.grid[i][j+k] == null) {
+               if (this.playerGrid[i][j+k] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.grid[i][j+k] = ship;
+                  this.playerGrid[i][j+k] = ship;
                }
                placed = true;
             }
@@ -149,7 +162,7 @@ public class Grid {
       for (int i = 0; i < this.size; i++) {
          str.append(i).append(" |");
          for (int j = 0; j < this.size; j++) {
-            str.append(" ").append(this.grid[j][i].toString()).append(" |");
+            str.append(" ").append(this.playerGrid[j][i].toString()).append(" |");
          }
          str.append(divider);
       }
