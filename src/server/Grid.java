@@ -128,13 +128,14 @@ public class Grid {
      * @param j The j index of the grid
      */
    public void shotsFired(int i, int j) {
-       if(this.grid[i][j] != Ship.EMPTY && this.grid[i][j] != Ship.HIT && this.grid[i][j] != Ship.MISS) {
-           grid[i][j] = Ship.HIT;
-           opponentView[i][j] = Ship.HIT;
-       }
-       else if(this.grid[i][j] == Ship.EMPTY) {
-           grid[i][j] = Ship.MISS;
-           opponentView[i][j] = Ship.MISS;
+       if(i < this.size && i >= 0 && j < this.size && j >= 0 ){
+           if (this.grid[i][j] != Ship.EMPTY && this.grid[i][j] != Ship.HIT && this.grid[i][j] != Ship.MISS) {
+               grid[i][j] = Ship.HIT;
+               opponentView[i][j] = Ship.HIT;
+           } else if (this.grid[i][j] == Ship.EMPTY) {
+               grid[i][j] = Ship.MISS;
+               opponentView[i][j] = Ship.MISS;
+           }
        }
    }
 
