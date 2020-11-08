@@ -21,8 +21,8 @@ public class Grid {
    /** An array containing all the Ships on this grid. Visible to the player. */
    private Ship[][] grid;
 
-//   /** An array containing the hits and misses. Visible to all opponents. */
-//   private Ship[][] opponentView;
+   /** The number of positions with a ship on them. */
+   private int totalSquares;
 
    /** A list of all the ships on the grid. */
    private List<Ship> ships;
@@ -33,6 +33,7 @@ public class Grid {
     * @param size The size of the square grid.
     */
    public Grid(int size, int numShips) {
+      this.totalSquares = 0;
       this.size = size;
       this.ships = new ArrayList<>();
       this.grid = new Ship[size][size];
@@ -84,6 +85,7 @@ public class Grid {
                   this.grid[i + k][j] = ship;
                }
                placed = true;
+               this.totalSquares += ship.getLength();
                this.ships.add(ship);
             }
 
@@ -100,6 +102,7 @@ public class Grid {
                   this.grid[i][j + k] = ship;
                }
                placed = true;
+               this.totalSquares += ship.getLength();
                this.ships.add(ship);
             }
          }
@@ -129,60 +132,23 @@ public class Grid {
    public void shotsFired(int i, int j) {
       if (i < this.size && i >= 0 && j < this.size && j >= 0) {
          Ship target = this.grid[i][j];
-         if (target != Ship.EMPTY && target != Ship.MISS) {
+         if (target != Ship.EMPTY && target != Ship.HIT && target != Ship.MISS){
             this.grid[i][j] = Ship.HIT;
+            this.totalSquares--;
          } else if (target == Ship.EMPTY) {
             this.grid[i][j] = Ship.MISS;
          }
       }
    }
-//
-//   /**
-//    * Returns a string representation of this grid.
-//    *
-//    * @return A string representation of this grid.
-//    */
-//   @Override
-//   public String toString() {
-//      StringBuilder str = new StringBuilder(" ");
-//      // Top row numbering all the columns of the grid.
-//      for (int i = 0; i < this.size; i++) {
-//         str.append("   ").append(i);
-//      }
-//      String divider = "\n  +" + "---+".repeat(this.size) + "\n";
-//      str.append(divider);
-//      for (int i = 0; i < this.size; i++) {
-//         str.append(i).append(" |");
-//         for (int j = 0; j < this.size; j++) {
-//            str.append(" ").append(this.playerView[i][j].toString()).append(" |");
-//         }
-//         str.append(divider);
-//      }
-//      return str.toString();
-//   }
-//
-//   /**
-//    * Returns a string representation of the opponent view grid
-//    *
-//    * @return A string representation of the opponent view grid
-//    */
-//   public String opponentView() {
-//      StringBuilder str = new StringBuilder(" ");
-//      // Top row numbering all the columns of the grid.
-//      for (int i = 0; i < this.size; i++) {
-//         str.append("   ").append(i);
-//      }
-//      String divider = "\n  +" + "---+".repeat(this.size) + "\n";
-//      str.append(divider);
-//      for (int i = 0; i < this.size; i++) {
-//         str.append(i).append(" |");
-//         for (int j = 0; j < this.size; j++) {
-//            str.append(" ").append(this.opponentView[i][j].toString()).append(" |");
-//         }
-//         str.append(divider);
-//      }
-//      return str.toString();
-//   }
+
+   /**
+    * Accessor for the total squares.
+    *
+    * @return The number of active ship squares in this grid.
+    */
+   public int getTotalSquares() {
+      return totalSquares;
+   }
 
    /**
     * Builds a String representing this grid that may be printed to the console.

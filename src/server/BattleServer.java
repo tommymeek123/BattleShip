@@ -11,7 +11,7 @@ public class BattleServer implements MessageListener {
    /** The ServerSocket used to communicate with a client. */
    private ServerSocket serverSocket;
 
-   /**  */
+   /** Whose turn it is. */
    private int current;
 
    /** The game of Battleship */
@@ -26,20 +26,35 @@ public class BattleServer implements MessageListener {
     */
    public BattleServer(int port, int gridSize) throws IOException {
       //this.serverSocket = new ServerSocket(port);
+      this.current = 0;
       this.game = new Game(gridSize);
    }
 
-   public void play() {
-      this.game.go();
+   public void execute(String command) {
+      String[] commands = command.split(" ");
+      if (this.validateCommand(commands)) {
+         this.game.execute(commands);
+      } else {
+         System.out.println("Invalid command: " + command);
+      }
    }
 
-   /**
-    * Adds a new player to the Battleship Game.
-    *
-    * @param player The new player's name.
-    */
-   public void addPlayer(String player) {
-      this.game.addPlayer(player);
+   private boolean validateCommand(String[] commands) {
+      throw new UnsupportedOperationException("not working yet");
+   }
+
+   public void play() {
+      if (this.game.numPlayers() > 1) {
+         this.game.go();
+      } else {
+         System.out.println("Not enough players to play the game");
+      }
+   }
+
+   public void show(String player) {
+      if (this.game.getPlayerAt(this.current).equals(player)) {
+
+      }
    }
 
    public void listen() {

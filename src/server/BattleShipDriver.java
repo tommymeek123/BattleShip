@@ -30,10 +30,10 @@ public class BattleShipDriver {
          gridSize = Integer.parseInt(args[1]);
       }
       BattleServer server = makeServer(port, gridSize);
-      server.addPlayer("mario");
-      server.addPlayer("toad");
-      server.addPlayer("luigi");
-      server.play();
+      server.execute("/join mario");
+      server.execute("/join toad");
+      server.execute("/join luigi");
+      server.execute("/play");
    }
 
    /**
