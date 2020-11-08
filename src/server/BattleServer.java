@@ -14,17 +14,32 @@ public class BattleServer implements MessageListener {
    /**  */
    private int current;
 
-   /**  */
+   /** The game of Battleship */
    private Game game;
 
    /**
     * Constructor for a BattleServer
     *
     * @param port The server's port number.
+    * @param gridSize The size of the grids.
     * @throws IOException if something goes wrong creating the ServerSocket.
     */
-   public BattleServer(int port) throws IOException {
-      this.serverSocket = new ServerSocket(port);
+   public BattleServer(int port, int gridSize) throws IOException {
+      //this.serverSocket = new ServerSocket(port);
+      this.game = new Game(gridSize);
+   }
+
+   public void play() {
+      this.game.go();
+   }
+
+   /**
+    * Adds a new player to the Battleship Game.
+    *
+    * @param player The new player's name.
+    */
+   public void addPlayer(String player) {
+      this.game.addPlayer(player);
    }
 
    public void listen() {

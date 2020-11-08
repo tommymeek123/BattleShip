@@ -1,5 +1,6 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,8 +14,17 @@ import java.util.Random;
  */
 public class Game {
 
+   /** The size of the grids in this game. */
+   private int size;
+
+   /** The number of ships on each grid in this game. */
+   private int numShips;
+
    /** A list of grids. One for each player. */
    private List<Grid> grids;
+
+   /** A list of active players in the game. */
+   private List<String> players;
 
    /**
     * Constructor for the Game class
@@ -22,22 +32,10 @@ public class Game {
     * @param size The size of the grids.
     */
    public Game(int size) {
-      int numShips = getNumShips(size);
-      Grid grid = new Grid(size, numShips);
-      grid.drawSelf();
-      grid.drawOpponent();
-      grid.shotsFired(0,0);
-      grid.shotsFired(1,1);
-      grid.shotsFired(2,2);
-      grid.shotsFired(3,3);
-      grid.shotsFired(4,4);
-      grid.shotsFired(5,5);
-      grid.shotsFired(6,6);
-      grid.shotsFired(7,7);
-      grid.shotsFired(8,8);
-      grid.shotsFired(9,9);
-      grid.drawSelf();
-      grid.drawOpponent();
+      this.numShips = getNumShips(size);
+      this.size = size;
+      this.grids = new ArrayList<>();
+      this.players = new ArrayList<>();
    }
 
    /**
@@ -67,4 +65,24 @@ public class Game {
       }
       return numShips;
    }
+
+   /**
+    * Adds a new player to this game and creates a new grid for that player.
+    *
+    * @param player The new player's name.
+    */
+   public void addPlayer(String player) {
+      this.grids.add(new Grid(this.size, this.numShips));
+      this.players.add(player);
+   }
+
+   /**
+    * Starts the game.
+    */
+   public void go() {
+      for (Grid g : this.grids) {
+         g.drawSelf();
+      }
+   }
+
 }

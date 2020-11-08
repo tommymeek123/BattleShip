@@ -1,5 +1,7 @@
 package server;
 
+import java.io.IOException;
+
 public class BattleShipDriver {
 
    /**
@@ -11,15 +13,6 @@ public class BattleShipDriver {
     *             board.
     */
    public static void main(String[] args) {
-//      int num = 0;
-//      try {
-//         //num = Integer.parseInt(args[0]);
-//         Game game = new Game(4);
-//
-//      }
-//      catch (NumberFormatException nfe) {
-//         System.out.println("Error");
-//      }
       go(args);
    }
 
@@ -29,9 +22,35 @@ public class BattleShipDriver {
     * @param args Command line arguments from main.
     */
    private static void go(String[] args) {
-      // validateArgs(args);
-      int boardSize = Integer.parseInt(args[0]);
-      Game game = new Game(boardSize);
+      int DEFAULT_SIZE = 10;
+      validateArgs(args);
+      int gridSize = DEFAULT_SIZE;
+      int port = Integer.parseInt(args[0]);
+      if (args.length == 2) {
+         gridSize = Integer.parseInt(args[1]);
+      }
+      BattleServer server = makeServer(port, gridSize);
+      server.addPlayer("mario");
+      server.addPlayer("toad");
+      server.addPlayer("luigi");
+      server.play();
+   }
+
+   /**
+    * Creates a Battleship server.
+    *
+    * @param port The server's port number.
+    * @param gridSize The size of the grids.
+    * @return A Battleship server.
+    */
+   private static BattleServer makeServer(int port, int gridSize) {
+      BattleServer server = null;
+      try {
+         server = new BattleServer(port, gridSize);
+      } catch (IOException ioe) {
+         System.err.println(ioe.getMessage());
+      }
+      return server;
    }
 
    /**
