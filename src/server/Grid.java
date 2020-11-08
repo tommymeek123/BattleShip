@@ -19,10 +19,10 @@ public class Grid {
    private int size;
 
    /** An array containing all the Ships on this grid. Visible to the player. */
-   private Ship[][] playerView;
+   private Ship[][] grid;
 
-   /** An array containing the hits and misses. Visible to all opponents. */
-   private Ship[][] opponentView;
+//   /** An array containing the hits and misses. Visible to all opponents. */
+//   private Ship[][] opponentView;
 
    /** A list of all the ships on the grid. */
    private List<Ship> ships;
@@ -35,8 +35,7 @@ public class Grid {
    public Grid(int size, int numShips) {
       this.size = size;
       this.ships = new ArrayList<>();
-      this.playerView = new Ship[size][size];
-      this.opponentView = new Ship[size][size];
+      this.grid = new Ship[size][size];
       this.setUp(numShips);
    }
 
@@ -51,9 +50,8 @@ public class Grid {
       }
       for (int i = 0; i < this.size; i++) {
          for (int j = 0; j < this.size; j++) {
-            this.opponentView[i][j] = Ship.EMPTY;
-            if (this.playerView[i][j] == null) {
-               this.playerView[i][j] = Ship.EMPTY;
+            if (this.grid[i][j] == null) {
+               this.grid[i][j] = Ship.EMPTY;
             }
          }
       }
@@ -77,13 +75,13 @@ public class Grid {
          if (direction && this.size - i >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.playerView[i + k][j] == null) {
+               if (this.grid[i + k][j] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.playerView[i + k][j] = ship;
+                  this.grid[i + k][j] = ship;
                }
                placed = true;
                this.ships.add(ship);
@@ -93,13 +91,13 @@ public class Grid {
          } else if (!direction && this.size - j >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.playerView[i][j + k] == null) {
+               if (this.grid[i][j + k] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.playerView[i][j + k] = ship;
+                  this.grid[i][j + k] = ship;
                }
                placed = true;
                this.ships.add(ship);
@@ -112,14 +110,14 @@ public class Grid {
     * Displays the grid to the console.
     */
    public void drawSelf() {
-      System.out.println(this.buildView(this.playerView));
+      System.out.println(this.buildView("Friendly"));
    }
 
    /**
     * Displays the opponent view of the grid to the console
     */
    public void drawOpponent() {
-      System.out.println(this.buildView(this.opponentView));
+      System.out.println(this.buildView("Enemy"));
    }
 
    /**
@@ -130,13 +128,11 @@ public class Grid {
     */
    public void shotsFired(int i, int j) {
       if (i < this.size && i >= 0 && j < this.size && j >= 0) {
-         Ship target = this.playerView[i][j];
+         Ship target = this.grid[i][j];
          if (target != Ship.EMPTY && target != Ship.MISS) {
-            this.playerView[i][j] = Ship.HIT;
-            this.opponentView[i][j] = Ship.HIT;
+            this.grid[i][j] = Ship.HIT;
          } else if (target == Ship.EMPTY) {
-            this.playerView[i][j] = Ship.MISS;
-            this.opponentView[i][j] = Ship.MISS;
+            this.grid[i][j] = Ship.MISS;
          }
       }
    }
@@ -191,10 +187,10 @@ public class Grid {
    /**
     * Builds a String representing this grid that may be printed to the console.
     *
-    * @param view The version of this grid to build. Either player or opponent.
+    * @param view The version of this grid to build. Either Friendly or Enemy.
     * @return A String representation of this grid
     */
-   private String buildView(Ship[][] view) {
+   private String buildView(String view) {
       StringBuilder str = new StringBuilder(" ");
       // Top row numbering all the columns of the grid.
       for (int i = 0; i < this.size; i++) {
@@ -205,7 +201,7 @@ public class Grid {
       for (int i = 0; i < this.size; i++) {
          str.append(i).append(" |");
          for (int j = 0; j < this.size; j++) {
-            str.append(" ").append(view[i][j].toString()).append(" |");
+            str.append(" ").append(this.grid[i][j].show(view)).append(" |");
          }
          str.append(divider);
       }

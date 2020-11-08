@@ -24,6 +24,20 @@ public class Game {
    public Game(int size) {
       int numShips = getNumShips(size);
       Grid grid = new Grid(size, numShips);
+      grid.drawSelf();
+      grid.drawOpponent();
+      grid.shotsFired(0,0);
+      grid.shotsFired(1,1);
+      grid.shotsFired(2,2);
+      grid.shotsFired(3,3);
+      grid.shotsFired(4,4);
+      grid.shotsFired(5,5);
+      grid.shotsFired(6,6);
+      grid.shotsFired(7,7);
+      grid.shotsFired(8,8);
+      grid.shotsFired(9,9);
+      grid.drawSelf();
+      grid.drawOpponent();
    }
 
    /**
