@@ -34,17 +34,10 @@ public class Grid {
     */
    public Grid(int size, int numShips) {
       this.size = size;
-      ships = new ArrayList<>();
+      this.ships = new ArrayList<>();
       this.playerView = new Ship[size][size];
       this.opponentView = new Ship[size][size];
       this.setUp(numShips);
-
-      //Setting up the opponent view grid
-      for (int i = 0; i < this.size; i++) {
-         for (int j = 0; j < this.size; j++) {
-            this.opponentView[i][j] = Ship.EMPTY;
-         }
-      }
    }
 
    /**
@@ -58,6 +51,7 @@ public class Grid {
       }
       for (int i = 0; i < this.size; i++) {
          for (int j = 0; j < this.size; j++) {
+            this.opponentView[i][j] = Ship.EMPTY;
             if (this.playerView[i][j] == null) {
                this.playerView[i][j] = Ship.EMPTY;
             }
