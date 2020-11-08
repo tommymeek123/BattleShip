@@ -24,8 +24,6 @@ public class Game {
    public Game(int size) {
       int numShips = getNumShips(size);
       Grid grid = new Grid(size, numShips);
-      grid.draw();
-      ;
    }
 
    /**

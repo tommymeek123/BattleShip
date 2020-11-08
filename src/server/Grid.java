@@ -1,5 +1,6 @@
 package server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -17,10 +18,10 @@ public class Grid {
    /** The size of this grid. */
    private int size;
 
-   /** An array containing all the squares of this grid. */
-   private Ship[][] playerGrid;
+   /** An array containing all the Ships on this grid. Visible to the player. */
+   private Ship[][] playerView;
 
-   /** An array containing all the squares of this grid. */
+   /** An array containing the hits and misses. Visible to all opponents. */
    private Ship[][] opponentView;
 
    /** A list of all the ships on the grid. */
@@ -33,14 +34,17 @@ public class Grid {
     */
    public Grid(int size, int numShips) {
       this.size = size;
+      ships = new ArrayList<>();
+      this.playerView = new Ship[size][size];
       this.opponentView = new Ship[size][size];
+      this.setUp(numShips);
+
+      //Setting up the opponent view grid
       for (int i = 0; i < this.size; i++) {
          for (int j = 0; j < this.size; j++) {
             this.opponentView[i][j] = Ship.EMPTY;
          }
       }
-      this.playerGrid = new Ship[size][size];
-      this.setUp(numShips);
    }
 
    /**
@@ -54,8 +58,8 @@ public class Grid {
       }
       for (int i = 0; i < this.size; i++) {
          for (int j = 0; j < this.size; j++) {
-            if (this.playerGrid[i][j] == null) {
-               this.playerGrid[i][j] = Ship.EMPTY;
+            if (this.playerView[i][j] == null) {
+               this.playerView[i][j] = Ship.EMPTY;
             }
          }
       }
@@ -75,34 +79,36 @@ public class Grid {
          boolean direction = rand.nextBoolean(); // true: vertical. false: horiz
          Ship ship = Ship.getById(shipId);
 
-         // Check left to right
+         // place vertically
          if (direction && this.size - i >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.playerGrid[i+k][j] == null) {
+               if (this.playerView[i + k][j] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.playerGrid[i+k][j] = ship;
+                  this.playerView[i + k][j] = ship;
                }
                placed = true;
+               this.ships.add(ship);
             }
 
-            // Check up to down
+            // place horizontally
          } else if (!direction && this.size - j >= ship.getLength()) {
             int validSpaces = 0;
             for (int k = 0; k < ship.getLength(); k++) {
-               if (this.playerGrid[i][j+k] == null) {
+               if (this.playerView[i][j + k] == null) {
                   validSpaces++;
                }
             }
             if (validSpaces == ship.getLength()) {
                for (int k = 0; k < ship.getLength(); k++) {
-                  this.playerGrid[i][j+k] = ship;
+                  this.playerView[i][j + k] = ship;
                }
                placed = true;
+               this.ships.add(ship);
             }
          }
       }
@@ -111,47 +117,90 @@ public class Grid {
    /**
     * Displays the grid to the console.
     */
-   public void draw() {
-      System.out.println(this.toString());
+   public void drawSelf() {
+      System.out.println(this.buildView(this.playerView));
    }
 
-//    public void draw() {
-//        System.out.print("      ");
-//        for(int i = 0; i < this.size; i++) {
-//            if (i != this.size - 1)
-//                System.out.print(i + "   ");
-//            else
-//                System.out.print(i);
-//        }
-//        int count = 0;
-//        for(int i = 0; i < size * 2; i++) {
-//            for(int j = 0; j < size; j++) {
-//                if(i == 0) {
-//                    System.out.print("   ");
-//                }
-//                else if( i % 2 == 0) {
-//                    System.out.print("+---");
-//                }
-//                else {
-//                    if(j == 0) {
-//                        System.out.print(i - count + " |");
-//                    }
-//                    else {
-//                        System.out.print(board[i - count][j].getShipSym() + "|");
-//                    }
-//                }
-//            }
-//            count++;
-//        }
-//    }
+   /**
+    * Displays the opponent view of the grid to the console
+    */
+   public void drawOpponent() {
+      System.out.println(this.buildView(this.opponentView));
+   }
 
    /**
-    * Returns a string representation of this grid.
+    * Called when an opponent fires. Determines if it's a hit and updates grids.
     *
-    * @return A string representation of this grid.
+    * @param i The i index of the grid.
+    * @param j The j index of the grid.
     */
-   @Override
-   public String toString() {
+   public void shotsFired(int i, int j) {
+      if (i < this.size && i >= 0 && j < this.size && j >= 0) {
+         Ship target = this.playerView[i][j];
+         if (target != Ship.EMPTY && target != Ship.MISS) {
+            this.playerView[i][j] = Ship.HIT;
+            this.opponentView[i][j] = Ship.HIT;
+         } else if (target == Ship.EMPTY) {
+            this.playerView[i][j] = Ship.MISS;
+            this.opponentView[i][j] = Ship.MISS;
+         }
+      }
+   }
+//
+//   /**
+//    * Returns a string representation of this grid.
+//    *
+//    * @return A string representation of this grid.
+//    */
+//   @Override
+//   public String toString() {
+//      StringBuilder str = new StringBuilder(" ");
+//      // Top row numbering all the columns of the grid.
+//      for (int i = 0; i < this.size; i++) {
+//         str.append("   ").append(i);
+//      }
+//      String divider = "\n  +" + "---+".repeat(this.size) + "\n";
+//      str.append(divider);
+//      for (int i = 0; i < this.size; i++) {
+//         str.append(i).append(" |");
+//         for (int j = 0; j < this.size; j++) {
+//            str.append(" ").append(this.playerView[i][j].toString()).append(" |");
+//         }
+//         str.append(divider);
+//      }
+//      return str.toString();
+//   }
+//
+//   /**
+//    * Returns a string representation of the opponent view grid
+//    *
+//    * @return A string representation of the opponent view grid
+//    */
+//   public String opponentView() {
+//      StringBuilder str = new StringBuilder(" ");
+//      // Top row numbering all the columns of the grid.
+//      for (int i = 0; i < this.size; i++) {
+//         str.append("   ").append(i);
+//      }
+//      String divider = "\n  +" + "---+".repeat(this.size) + "\n";
+//      str.append(divider);
+//      for (int i = 0; i < this.size; i++) {
+//         str.append(i).append(" |");
+//         for (int j = 0; j < this.size; j++) {
+//            str.append(" ").append(this.opponentView[i][j].toString()).append(" |");
+//         }
+//         str.append(divider);
+//      }
+//      return str.toString();
+//   }
+
+   /**
+    * Builds a String representing this grid that may be printed to the console.
+    *
+    * @param view The version of this grid to build. Either player or opponent.
+    * @return A String representation of this grid
+    */
+   private String buildView(Ship[][] view) {
       StringBuilder str = new StringBuilder(" ");
       // Top row numbering all the columns of the grid.
       for (int i = 0; i < this.size; i++) {
@@ -162,7 +211,7 @@ public class Grid {
       for (int i = 0; i < this.size; i++) {
          str.append(i).append(" |");
          for (int j = 0; j < this.size; j++) {
-            str.append(" ").append(this.playerGrid[j][i].toString()).append(" |");
+            str.append(" ").append(view[i][j].toString()).append(" |");
          }
          str.append(divider);
       }
