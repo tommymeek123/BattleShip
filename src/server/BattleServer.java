@@ -31,8 +31,7 @@ public class BattleServer implements MessageListener {
    }
 
    public void execute(String command) {
-      String response = this.game.execute(command);
-      this.broadcast(response);
+      this.broadcast(this.game.execute(command));
    }
 
    public void listen() {

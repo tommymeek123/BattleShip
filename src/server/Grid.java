@@ -111,16 +111,20 @@ public class Grid {
 
    /**
     * Displays the grid to the console.
+    *
+    * @return A string visualization of this grid
     */
-   public void drawSelf() {
-      System.out.println(this.buildView("Friendly"));
+   public String drawSelf() {
+      return this.buildView("Friendly");
    }
 
    /**
     * Displays the opponent view of the grid to the console
+    *
+    * @return The opponent view of the grid.
     */
-   public void drawOpponent() {
-      System.out.println(this.buildView("Enemy"));
+   public String drawOpponent() {
+      return this.buildView("Enemy");
    }
 
    /**

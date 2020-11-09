@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class BattleShipDriver {
 
@@ -30,10 +31,10 @@ public class BattleShipDriver {
          gridSize = Integer.parseInt(args[1]);
       }
       BattleServer server = makeServer(port, gridSize);
-      server.execute("/join mario");
-      server.execute("/join toad");
-      server.execute("/join luigi");
-      server.execute("/play");
+      Scanner sc = new Scanner(System.in);
+      while (true) {
+         server.execute(sc.nextLine());
+      }
    }
 
    /**
