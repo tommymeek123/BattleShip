@@ -97,6 +97,7 @@ public class Game {
                response = this.attack(commands[1], x, y);
                break;
             case "/quit":
+               response = this.quit();
                break;
             case "/show":
                response = this.show(commands[1]);
@@ -230,7 +231,22 @@ public class Game {
     * @return An indication that the player surrendered.
     */
    private String quit() {
-      throw new UnsupportedOperationException("not working yet");
+      String response;
+      String currentPlayer = this.players.get(this.current);
+      Grid currentGrid = this.grids.get(this.current);
+      this.players.remove(currentPlayer);
+      this.grids.remove(currentGrid);
+      response = "!!! " + currentPlayer + " surrendered";
+      if (this.players.size() == 1) {
+         response += "\nGAME OVER: " + this.players.get(0) + " wins!";
+         this.inPlay = false;
+      }
+      this.current = (this.current + 1) % this.players.size();
+      if (this.inPlay) {
+         String newPlayer = this.players.get(this.current);
+         response += "\n" + newPlayer + " it is your turn";
+      }
+      return response;
    }
 
    /**
