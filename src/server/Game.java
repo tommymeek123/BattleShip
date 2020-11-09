@@ -1,5 +1,6 @@
 package server;
 
+import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -137,8 +138,54 @@ public class Game {
    }
 
    private boolean validateCommand(String[] commands) {
-      throw new UnsupportedOperationException("not working yet");
+      boolean isValid = false;
+      if(commands[0].equals("/join") && commands.length == 2) {
+         isValid = true;
+      }
+      else if(commands[0].equals("/play") && commands.length == 1) {
+         isValid = true;
+      }
+      else if(commands[0].equals("/attack") && commands.length == 4) {
+         isValid = this.validateAttack(commands);
+      }
+      else if(commands[0].equals("/quit") && commands.length == 1) {
+         isValid = true;
+      }
+      else if(commands[0].equals("/show") && commands.length == 2) {
+         isValid = this.validateShow(commands);
+      }
+      //throw new UnsupportedOperationException("not working yet");
+      return isValid;
    }
+
+   private boolean validateAttack(String[] commands) {
+      boolean isValid = false;
+      try {
+         int i = Integer.parseInt(commands[2]);
+         int j = Integer.parseInt(commands[3]);
+         if(i >= 0 && i < this.size && j >= 0 && j < this.size && this.players.contains(commands[1]))
+            isValid = true;
+      }
+      catch (NumberFormatException nfe) {
+         //Do something?
+      }
+      return isValid;
+   }
+
+   private boolean validateShow(String[] commands) {
+      boolean isValid = false;
+      if(this.players.contains(commands[1]))
+         isValid = true;
+      return isValid;
+   }
+
+
+
+
+
+
+
+
 
    /**
     * Determines if the supplied String is the name of a current player.

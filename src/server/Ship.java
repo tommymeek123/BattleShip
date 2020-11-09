@@ -106,6 +106,7 @@ public enum Ship {
       return view;
    }
 
+
    /**
     * Returns the symbol associated with this ship.
     *
