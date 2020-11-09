@@ -31,30 +31,8 @@ public class BattleServer implements MessageListener {
    }
 
    public void execute(String command) {
-      String[] commands = command.split(" ");
-      if (this.validateCommand(commands)) {
-         this.game.execute(commands);
-      } else {
-         System.out.println("Invalid command: " + command);
-      }
-   }
-
-   private boolean validateCommand(String[] commands) {
-      throw new UnsupportedOperationException("not working yet");
-   }
-
-   public void play() {
-      if (this.game.numPlayers() > 1) {
-         this.game.go();
-      } else {
-         System.out.println("Not enough players to play the game");
-      }
-   }
-
-   public void show(String player) {
-      if (this.game.getPlayerAt(this.current).equals(player)) {
-
-      }
+      String response = this.game.execute(command);
+      this.broadcast(response);
    }
 
    public void listen() {
@@ -62,7 +40,7 @@ public class BattleServer implements MessageListener {
    }
 
    public void broadcast(String message) {
-
+      System.out.println(message);
    }
 
    /**

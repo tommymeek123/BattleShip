@@ -75,14 +75,16 @@ public class Game {
     *
     * @param player The new player's name.
     */
-   public void addPlayer(String player) {
+   public String addPlayer(String player) {
+      String response;
       if (this.inPlay) {
-         System.out.println("Game already in progress");
+         response = "Game already in progress";
       } else {
          this.grids.add(new Grid(this.size, this.numShips));
          this.players.add(player);
-         System.out.println("!!! " + player + " has joined");
+         response = "!!! " + player + " has joined";
       }
+      return response;
    }
 
    /**
@@ -95,30 +97,47 @@ public class Game {
       return this.players.get(playerNum);
    }
 
-   private void play() {
+   private String play() {
+      String response;
       if (this.inPlay) {
-         System.out.println("Game already in progress");
+         response = "Game already in progress";
+      } else if (this.players.size() < 2) {
+         response = "Not enough players to play the game";
       } else {
          this.inPlay = true;
-         System.out.println("The game begins");
+         response = "The game begins";
       }
+      return response;
    }
 
-   public void execute(String[] commands) {
-      switch (commands[0]) {
-         case "/join":
-            this.addPlayer(commands[1]);
-            break;
-         case "/play":
-            this.play();
-            break;
-         case "/attack":
-            break;
-         case "/quit":
-            break;
-         case "/show":
-            break;
+   public String execute(String command) {
+      String[] commands = command.split(" ");
+      String response = "";
+      if (this.validateCommand(commands)) {
+         switch (commands[0]) {
+            case "/join":
+               response = this.addPlayer(commands[1]);
+               break;
+            case "/play":
+               response = this.play();
+               break;
+            case "/attack":
+               int current = 0;
+               current = (current + 1) % this.players.size();
+               break;
+            case "/quit":
+               break;
+            case "/show":
+               break;
+         }
+      } else {
+         response = "Invalid command: " + command;
       }
+      return response;
+   }
+
+   private boolean validateCommand(String[] commands) {
+      throw new UnsupportedOperationException("not working yet");
    }
 
    /**
@@ -138,15 +157,6 @@ public class Game {
     */
    public int numPlayers() {
       return this.players.size();
-   }
-
-   /**
-    * Starts the game.
-    */
-   public void go() {
-      for (Grid g : this.grids) {
-         g.drawSelf();
-      }
    }
 
 }
