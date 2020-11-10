@@ -146,7 +146,8 @@ public class Game {
       try {
          int i = Integer.parseInt(commands[2]);
          int j = Integer.parseInt(commands[3]);
-         if(i >= 0 && i < this.size && j >= 0 && j < this.size && this.players.contains(commands[1]))
+         if (i >= 0 && i < this.size && j >= 0 && j < this.size &&
+                 this.players.contains(commands[1]))
             isValid = true;
       }
       catch (NumberFormatException nfe) {
