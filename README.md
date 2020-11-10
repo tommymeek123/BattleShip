@@ -30,9 +30,10 @@ extraction:
 tar -xzvf battleship.tar.gz
 
 compilation:
-cd BattleShip/src/server/
-javac *.java
+cd BattleShip/
+mkdir out/
+javac -d out/ src/server/*.java src/client/*.java src/common/*.java
 
 running the game:
-java BattleShipDriver <port> [gridsize]
+java -cp out/ server.BattleShipDriver <port> [gridsize]
 
