@@ -181,7 +181,7 @@ public class Game {
          response = "Not enough players to play the game";
       } else {
          this.inPlay = true;
-         response = "The game begins";
+         response = "The game begins\n" +this.players.get(0)+" it is your turn";
       }
       return response;
    }
@@ -212,6 +212,7 @@ public class Game {
                   response += "\nGAME OVER: " + attacker + " wins!";
                   this.inPlay = false;
                }
+               this.current--; // prevent bug where next player is skipped
             }
             this.current = (this.current + 1) % this.players.size();
             if (this.inPlay) {
@@ -241,7 +242,7 @@ public class Game {
          response += "\nGAME OVER: " + this.players.get(0) + " wins!";
          this.inPlay = false;
       }
-      this.current = (this.current + 1) % this.players.size();
+      this.current %= this.players.size();
       if (this.inPlay) {
          String newPlayer = this.players.get(this.current);
          response += "\n" + newPlayer + " it is your turn";
