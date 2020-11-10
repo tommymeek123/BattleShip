@@ -109,6 +109,12 @@ public class Game {
       return response;
    }
 
+   /**
+    * Ensures that a given command is valid.
+    *
+    * @param commands A command as an array of Strings.
+    * @return True if the command is valid. False otherwise.
+    */
    private boolean validateCommand(String[] commands) {
       boolean isValid = false;
       if(commands[0].equals("/join") && commands.length == 2) {
@@ -129,6 +135,12 @@ public class Game {
       return isValid;
    }
 
+   /**
+    * Ensures that an /attack command is in a valid format.
+    *
+    * @param commands An /attack command.
+    * @return True if the /attack command is valid. False otherwise.
+    */
    private boolean validateAttack(String[] commands) {
       boolean isValid = false;
       try {
@@ -138,11 +150,17 @@ public class Game {
             isValid = true;
       }
       catch (NumberFormatException nfe) {
-         //Do something?
+         return false;
       }
       return isValid;
    }
 
+   /**
+    * Ensures that a /show command is in a valid format.
+    *
+    * @param commands A /show command.
+    * @return True if the /show command is valid. False otherwise.
+    */
    private boolean validateShow(String[] commands) {
       boolean isValid = false;
       if(this.players.contains(commands[1]))
