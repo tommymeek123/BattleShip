@@ -5,6 +5,18 @@ import java.util.Scanner;
 
 public class BattleShipDriver {
 
+   /** The index of the command line argument specifying the port number. */
+   final static int PORT_ARG = 0;
+
+   /** The index of the command line argument specifying the grid size. */
+   final static int SIZE_ARG = 1;
+
+   /** The minimum number of command line arguments. */
+   final static int MIN_ARGS = 1;
+
+   /** The maximum number of command line arguments. */
+   final static int MAX_ARGS = 2;
+
    /**
     * Entry point into the program.
     *
@@ -23,16 +35,16 @@ public class BattleShipDriver {
     * @param args Command line arguments from main.
     */
    private static void go(String[] args) {
-      int DEFAULT_SIZE = 10;
+      final int DEFAULT_SIZE = 10;
       validateArgs(args);
       int gridSize = DEFAULT_SIZE;
-      int port = Integer.parseInt(args[0]);
-      if (args.length == 2) {
-         gridSize = Integer.parseInt(args[1]);
+      int port = Integer.parseInt(args[PORT_ARG]);
+      if (args.length == MAX_ARGS) {
+         gridSize = Integer.parseInt(args[SIZE_ARG]);
       }
       BattleServer server = makeServer(port, gridSize);
       Scanner sc = new Scanner(System.in);
-      while (true) {
+      while (true) { // will change once networking capabilities are implemented
          server.execute(sc.nextLine());
       }
    }
@@ -60,16 +72,20 @@ public class BattleShipDriver {
     * @param args Command line arguments to the program.
     */
    private static void validateArgs(String[] args) {
-      if (args.length == 0 || args.length > 2) {
+      final int PORT_ARG = 0;
+      final int SIZE_ARG = 1;
+      final String PORT_ERR_MSG = "Invalid port number. Should be [1024-65535]";
+      final String SIZE_ERR_MSG = "Invalid grid size. Should be [5-10]";
+      if (args.length < MIN_ARGS || args.length > MAX_ARGS) {
          usage();
       }
-      if (!validatePort(args[0])) {
-         System.err.println("Invalid port number.");
+      if (!validatePort(args[PORT_ARG])) {
+         System.err.println(PORT_ERR_MSG);
          System.exit(1);
       }
       if (args.length == 2) {
-         if (!validateSize(args[1])) {
-            System.err.println("Invalid grid size.");
+         if (!validateSize(args[SIZE_ARG])) {
+            System.err.println(SIZE_ERR_MSG);
             System.exit(1);
          }
       }
@@ -79,7 +95,8 @@ public class BattleShipDriver {
     * Prints a message indicating how the program should be used.
     */
    private static void usage() {
-      System.err.println("java server.BattleShipDriver <port> [grid size]");
+      final String USG_MSG = "java server.BattleShipDriver <port> [grid size]";
+      System.err.println(USG_MSG);
       System.exit(1);
    }
 
@@ -91,13 +108,14 @@ public class BattleShipDriver {
     */
    private static boolean validatePort(String portStr) {
       final int MAX_PORT  = 65535;
+      final int MIN_PORT  = 1024;
       int portNum;
       try {
          portNum = Integer.parseInt(portStr);
       } catch (NumberFormatException nfe) {
          return false;
       }
-      return portNum >= 0 && portNum <= MAX_PORT;
+      return portNum >= MIN_PORT && portNum <= MAX_PORT;
    }
 
    /**
@@ -107,13 +125,15 @@ public class BattleShipDriver {
     * @return True if the string passed is a valid grid size. False otherwise.
     */
    private static boolean validateSize(String sizeStr) {
+      final int MIN_SIZE = 5;
+      final int MAX_SIZE = 10;
       int sizeNum;
       try {
          sizeNum = Integer.parseInt(sizeStr);
       } catch (NumberFormatException nfe) {
          return false;
       }
-      return sizeNum >= 5 && sizeNum <= 10;
+      return sizeNum >= MIN_SIZE && sizeNum <= MAX_SIZE;
    }
 
 }
