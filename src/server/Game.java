@@ -180,9 +180,13 @@ public class Game {
       if (this.inPlay) {
          response = "Game already in progress";
       } else {
-         this.grids.add(new Grid(this.size, this.numShips));
-         this.players.add(player);
-         response = "!!! " + player + " has joined";
+         if (!this.players.contains(player)) {
+            this.grids.add(new Grid(this.size, this.numShips));
+            this.players.add(player);
+            response = "!!! " + player + " has joined";
+         } else {
+            response = player + " is already in the game.";
+         }
       }
       return response;
    }
