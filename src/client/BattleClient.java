@@ -1,5 +1,6 @@
 package client;
 
+import common.ConnectionAgent;
 import common.MessageListener;
 import common.MessageSource;
 
@@ -18,6 +19,12 @@ public class BattleClient extends MessageSource implements MessageListener {
    /* The username of the client */
    private String username;
    //ConnectionAgent ca;
+
+   /** Connection agent used to communicate with the sever. */
+   private ConnectionAgent agent;
+
+   /**  */
+   private PrintStreamMessageListener listener;
 
    /**
     * Constructor for a BattleClient

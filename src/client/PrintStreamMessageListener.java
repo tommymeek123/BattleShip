@@ -14,7 +14,7 @@ public class PrintStreamMessageListener implements MessageListener {
    }
 
    public void messageReceived(String message, MessageSource source) {
-      out.println(message);
+      this.out.println(message);
    }
 
    public void sourceClosed(MessageSource source) {
