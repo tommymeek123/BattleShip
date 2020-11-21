@@ -50,6 +50,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
          this.out.println(message);
          try {
             this.close();
+            thread.interrupt();
          }
          catch (IOException ieo) {
             System.err.println(ieo.getMessage());
