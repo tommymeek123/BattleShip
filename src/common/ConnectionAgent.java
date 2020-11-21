@@ -19,6 +19,8 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    /** The thread in which this agent will run. */
    private Thread thread;
 
+   private boolean joined = false;
+
    /**
     * Constructor.
     *
@@ -38,8 +40,14 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @param message The message to be sent across the network.
     */
    public void sendMessage(String message) {
-      //System.out.println(message);
-      this.out.println(message);
+      if(message.contains("/join") && joined == false) {
+         this.out.println(message);
+         joined = true;
+      }
+      else if(message.contains("/join"))
+         this.out.println("Already in game");
+      else
+         this.out.println(message);
    }
 
    /**
@@ -76,14 +84,12 @@ public class ConnectionAgent extends MessageSource implements Runnable {
 
    @Override
    public void run() {
+      int i = 0;
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
          //System.out.println("Hey there!");
          if (in.hasNext()) {
-            //System.out.println("Hi there!");
             String command = in.nextLine();
-            //System.out.println(command);
-            //System.out.println(this.messageListeners);
             this.notifyReceipt(command);
          }
       }

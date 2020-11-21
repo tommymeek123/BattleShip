@@ -84,7 +84,8 @@ public class BattleServer implements MessageListener {
                agent.sendMessage(result);
             }
          }
-      } else {
+      }
+      else {
          this.broadcast(result);
       }
    }
