@@ -35,5 +35,5 @@ mkdir out/
 javac -d out/ src/server/*.java src/client/*.java src/common/*.java
 
 running the game:
-java -cp out/ server.BattleShipDriver <port> [gridsize]
+java -cp out/ server.BattleServerDriver <port> [gridsize]
 

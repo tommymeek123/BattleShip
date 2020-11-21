@@ -8,23 +8,20 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class BattleClient extends MessageSource implements MessageListener {
 
-   /* The server that the client is trying to connect to */
+   /** The server that the client is trying to connect to */
    private InetAddress host;
-   /* The port the client is using */
+
+   /** The port the client is using */
    private int port;
-   /* The username of the client */
+
+   /** The username of the client */
    private String username;
-   //ConnectionAgent ca;
 
    /** Connection agent used to communicate with the sever. */
    private ConnectionAgent agent;
-
-   /**  */
-   private PrintStreamMessageListener listener;
 
    /**
     * Constructor for a BattleClient
@@ -32,36 +29,20 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param port the port used to try to connect to the server
     * @param username the username of the client player
     */
-   public BattleClient(String hostname, int port, String username) {
-      try {
-         this.host = InetAddress.getByName(hostname);
-      }
-      catch(UnknownHostException uhe) {
-         System.err.println(uhe.getMessage());
-      }
+   public BattleClient(String hostname, int port, String username)
+                                                   throws UnknownHostException {
+      this.host = InetAddress.getByName(hostname);
       this.port = port;
       this.username = username;
-
-
    }
 
    /**
     *
     */
-   public void connect() {
-      try {
-         Socket socket = new Socket(host, port);
-         //ConnectionAgent ca = new ConnectionAgent(socket);
-
-         //while(ca.isConnected()) {
-
-         //}
-
-      }
-      catch (IOException ieo) {
-         System.out.println("Error");
-      }
-
+   public void connect() throws IOException {
+      Socket socket = new Socket(host, port);
+      this.agent = new ConnectionAgent(socket);
+      this.agent.run();
    }
 
    /**
@@ -70,7 +51,7 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param source  The source from which this message originated (if needed).
     */
    public void messageReceived(String message, MessageSource source) {
-      System.out.println(message);
+      this.notifyReceipt(message);
    }
 
    /**
@@ -87,7 +68,7 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param message the message being sent
     */
    public void send(String message) {
-      //ca.sendMessage(message);
+      this.agent.sendMessage(message);
    }
 
    /**

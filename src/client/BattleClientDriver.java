@@ -1,6 +1,8 @@
 package client;
 
-public class BattleDriver {
+import java.io.IOException;
+
+public class BattleClientDriver {
 
    /**
     * Main method that creates a BattleClient and handles main startup process.
@@ -19,8 +21,14 @@ public class BattleDriver {
          }
          String username = args[2];
 
-         BattleClient bc = new BattleClient(hostname, port, username);
-
+         var outStream = new PrintStreamMessageListener(System.out);
+         try {
+            BattleClient bc = new BattleClient(hostname, port, username);
+            bc.addMessageListener(outStream);
+            bc.connect();
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
       }
       else {
          System.out.println("You must supply a hostname, port number and username.");

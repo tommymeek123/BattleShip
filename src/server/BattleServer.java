@@ -1,10 +1,14 @@
 package server;
 
+import common.ConnectionAgent;
 import common.MessageListener;
 import common.MessageSource;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BattleServer implements MessageListener {
 
@@ -17,6 +21,9 @@ public class BattleServer implements MessageListener {
    /** The game of Battleship */
    private Game game;
 
+   /** The list of active connection agents. */
+   List<ConnectionAgent> agents;
+
    /**
     * Constructor for a BattleServer
     *
@@ -25,40 +32,59 @@ public class BattleServer implements MessageListener {
     * @throws IOException if something goes wrong creating the ServerSocket.
     */
    public BattleServer(int port, int gridSize) throws IOException {
-      //this.serverSocket = new ServerSocket(port);
+      this.serverSocket = new ServerSocket(port);
       this.current = 0;
       this.game = new Game(gridSize);
+      this.agents = new ArrayList<>();
    }
 
-   public void execute(String command) {
-      this.broadcast(this.game.execute(command));
-   }
-
-   public void listen() {
-
-   }
-
-   public void broadcast(String message) {
-      System.out.println(message);
+   public void listen() throws IOException {
+      while (!this.serverSocket.isClosed()) {
+         Socket socket = this.serverSocket.accept();
+         ConnectionAgent agent = new ConnectionAgent(socket);
+         agent.addMessageListener(this);
+         this.agents.add(agent);
+         agent.run();
+      }
    }
 
    /**
-    * Used to notify observers that the subject has received a message.
+    * Send a message to all the clients connected to this server.
     *
-    * @param message The message received by the subject
-    * @param source  The source from which this message originated (if needed).
+    * @param message The message to send out.
+    */
+   public void broadcast(String message) {
+      for (ConnectionAgent agent : this.agents) {
+         agent.sendMessage(message);
+      }
+   }
+
+   /**
+    * Attempts to execute the given command.
+    *
+    * @param message The command received from the client.
+    * @param source  The connection agent through which the command was received.
     */
    public void messageReceived(String message, MessageSource source) {
-
+      String result = this.game.execute(message);
+      if (result.contains("Invalid command")) {
+         for (ConnectionAgent agent : this.agents) {
+            if (agent == source) {
+               agent.sendMessage(result);
+            }
+         }
+      } else {
+         this.broadcast(result);
+      }
    }
 
    /**
-    * Used to notify observers that the subject will not receive new messages.
-    * observers can deregister themselves.
+    * Close the connection to a client.
     *
-    * @param source The MessageSource that does not expect more messages.
+    * @param source The connection agent to close.
     */
    public void sourceClosed(MessageSource source) {
-
+      source.removeMessageListener(this);
+      this.agents.remove(source);
    }
 }

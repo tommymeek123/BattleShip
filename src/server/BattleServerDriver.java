@@ -1,9 +1,8 @@
 package server;
 
 import java.io.IOException;
-import java.util.Scanner;
 
-public class BattleShipDriver {
+public class BattleServerDriver {
 
    /** The index of the command line argument specifying the port number. */
    final static int PORT_ARG = 0;
@@ -42,28 +41,12 @@ public class BattleShipDriver {
       if (args.length == MAX_ARGS) {
          gridSize = Integer.parseInt(args[SIZE_ARG]);
       }
-      BattleServer server = makeServer(port, gridSize);
-      Scanner sc = new Scanner(System.in);
-      while (true) { // will change once networking capabilities are implemented
-         server.execute(sc.nextLine());
-      }
-   }
-
-   /**
-    * Creates a Battleship server.
-    *
-    * @param port The server's port number.
-    * @param gridSize The size of the grids.
-    * @return A Battleship server.
-    */
-   private static BattleServer makeServer(int port, int gridSize) {
-      BattleServer server = null;
       try {
-         server = new BattleServer(port, gridSize);
-      } catch (IOException ioe) {
-         System.err.println(ioe.getMessage());
+         BattleServer server = new BattleServer(port, gridSize);
+         server.listen();
+      } catch (IOException e) {
+         e.printStackTrace();
       }
-      return server;
    }
 
    /**
@@ -95,7 +78,7 @@ public class BattleShipDriver {
     * Prints a message indicating how the program should be used.
     */
    private static void usage() {
-      final String USG_MSG = "java server.BattleShipDriver <port> [grid size]";
+      final String USG_MSG = "java server.BattleServerDriver <port> [grid size]";
       System.err.println(USG_MSG);
       System.exit(1);
    }
