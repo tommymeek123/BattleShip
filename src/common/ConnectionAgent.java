@@ -38,6 +38,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @param message The message to be sent across the network.
     */
    public void sendMessage(String message) {
+      //System.out.println(message);
       this.out.println(message);
    }
 
@@ -77,10 +78,12 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    public void run() {
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
-         System.out.println("Hey there!");
+         //System.out.println("Hey there!");
          if (in.hasNext()) {
-            System.out.println("Hi there!");
+            //System.out.println("Hi there!");
             String command = in.nextLine();
+            //System.out.println(command);
+            //System.out.println(this.messageListeners);
             this.notifyReceipt(command);
          }
       }

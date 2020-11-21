@@ -32,11 +32,12 @@ public class BattleClientDriver {
          var outStream = new PrintStreamMessageListener(System.out);
          try {
             BattleClient bc = new BattleClient(hostname, port, username);
-            bc.addMessageListener(outStream);
             bc.connect();
+            bc.addMessageListener(outStream);
+            bc.send("/join " + username);
             while (true) { //TODO: fix
                String command = getInput();
-               System.out.println(command);
+               //System.out.println(command);
                bc.send(command);
             }
          } catch (IOException e) {

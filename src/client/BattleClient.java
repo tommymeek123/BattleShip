@@ -50,6 +50,7 @@ public class BattleClient extends MessageSource implements MessageListener {
       Socket socket = new Socket(host, port);
       this.agent = new ConnectionAgent(socket);
       Thread thread = new Thread(this.agent);
+      this.agent.addMessageListener(this);
       thread.start();
 //      System.out.println("Ho there!");
 //      this.agent.run();
@@ -78,11 +79,11 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param message the message being sent
     */
    public void send(String message) {
-      System.out.println("Whoa there!");
+      //System.out.println("Whoa there!");
       this.agent.sendMessage(message);
    }
 
-   /**
+   /**agent.run();
     * Used to get the username
     * @return the username
     */
