@@ -40,12 +40,21 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @param message The message to be sent across the network.
     */
    public void sendMessage(String message) {
-      if(message.contains("/join") && joined == false) {
+      if(message.contains("/join") && !joined) {
          this.out.println(message);
          joined = true;
       }
       else if(message.contains("/join"))
          this.out.println("Already in game");
+      else if(message.contains("/quit")) {
+         this.out.println(message);
+         try {
+            this.close();
+         }
+         catch (IOException ieo) {
+            System.err.println(ieo.getMessage());
+         }
+      }
       else
          this.out.println(message);
    }
