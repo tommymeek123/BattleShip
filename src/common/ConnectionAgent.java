@@ -29,7 +29,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
       this.socket = socket;
       this.out = new PrintStream(this.socket.getOutputStream());
       this.in = new Scanner(this.socket.getInputStream());
-      this.thread = new Thread(this);
+      //this.thread = new Thread(this);
    }
 
    /**
@@ -59,17 +59,30 @@ public class ConnectionAgent extends MessageSource implements Runnable {
       this.socket.close();
    }
 
+//   @Override
+//   public void run() {
+//      this.thread = Thread.currentThread();
+//      while (this.isConnected()) {
+//         String command = null;
+//         while (!this.thread.isInterrupted()) {
+//            System.out.println("Hey there!");
+//            command = in.next();
+//            System.out.println("Hi there!");
+//         }
+//         this.notifyReceipt(command);
+//      }
+//   }
+
    @Override
    public void run() {
       this.thread = Thread.currentThread();
-      while (this.isConnected()) {
-         String command = null;
-         while (!this.thread.isInterrupted()) {
-            System.out.println("Hey there!");
-            command = in.next();
+      while (!this.thread.isInterrupted()) {
+         System.out.println("Hey there!");
+         if (in.hasNext()) {
             System.out.println("Hi there!");
+            String command = in.nextLine();
+            this.notifyReceipt(command);
          }
-         this.notifyReceipt(command);
       }
    }
 }

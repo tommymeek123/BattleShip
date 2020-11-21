@@ -1,6 +1,7 @@
 package client;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  * A driver to start a Battleship client
@@ -33,6 +34,11 @@ public class BattleClientDriver {
             BattleClient bc = new BattleClient(hostname, port, username);
             bc.addMessageListener(outStream);
             bc.connect();
+            while (true) { //TODO: fix
+               String command = getInput();
+               System.out.println(command);
+               bc.send(command);
+            }
          } catch (IOException e) {
             e.printStackTrace();
          }
@@ -41,4 +47,12 @@ public class BattleClientDriver {
          System.out.println("You must supply a hostname, port number and username.");
       }
    }
+
+   public static String getInput() {
+      Scanner in = new Scanner(System.in);
+      String command = null;
+      command = in.nextLine();
+      return command;
+   }
+
 }
