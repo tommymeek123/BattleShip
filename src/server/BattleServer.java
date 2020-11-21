@@ -76,7 +76,6 @@ public class BattleServer implements MessageListener {
     * @param source  The connection agent through which the command was received.
     */
    public void messageReceived(String message, MessageSource source) {
-
       String result = this.game.execute(message);
       if (result.contains("Invalid command")) {
          for (ConnectionAgent agent : this.agents) {

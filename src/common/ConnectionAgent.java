@@ -19,6 +19,8 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    /** The thread in which this agent will run. */
    private Thread thread;
 
+   private String username;
+
    private boolean joined = false;
 
    /**
@@ -42,6 +44,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    public void sendMessage(String message) {
       if(message.contains("/join") && !joined) {
          this.out.println(message);
+         this.username = message.substring(6);
          joined = true;
       }
       else if(message.contains("/join"))
@@ -75,6 +78,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @throws IOException if an error occurs while closing the socket.
     */
    public void close() throws IOException {
+      System.out.println(this.username);
       this.socket.close();
    }
 
