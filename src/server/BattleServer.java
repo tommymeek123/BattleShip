@@ -10,6 +10,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A server to host a game of Battleship.
+ *
+ * @author Gatlin Cruz
+ * @author Tommy Meek
+ * @version December, 2020
+ */
 public class BattleServer implements MessageListener {
 
    /** The ServerSocket used to communicate with a client. */

@@ -2,6 +2,13 @@ package client;
 
 import java.io.IOException;
 
+/**
+ * A driver to start a Battleship client
+ *
+ * @author Gatlin Cruz
+ * @author Tommy Meek
+ * @version December, 2020
+ */
 public class BattleClientDriver {
 
    /**

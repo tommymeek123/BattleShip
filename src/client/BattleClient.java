@@ -9,6 +9,13 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * A client to play a game of Battleship.
+ *
+ * @author Gatlin Cruz
+ * @author Tommy Meek
+ * @version December, 2020
+ */
 public class BattleClient extends MessageSource implements MessageListener {
 
    /** The server that the client is trying to connect to */

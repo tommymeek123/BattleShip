@@ -61,12 +61,15 @@ public class ConnectionAgent extends MessageSource implements Runnable {
 
    @Override
    public void run() {
-      System.out.println("Hey there!");
-      while (!this.thread.isInterrupted()) {
-         String command = in.nextLine();
-         System.out.println("Hi there!");
+      this.thread = Thread.currentThread();
+      while (this.isConnected()) {
+         String command = null;
+         while (!this.thread.isInterrupted()) {
+            System.out.println("Hey there!");
+            command = in.next();
+            System.out.println("Hi there!");
+         }
          this.notifyReceipt(command);
       }
-      System.out.println("Ho there!");
    }
 }

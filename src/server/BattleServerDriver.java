@@ -2,6 +2,13 @@ package server;
 
 import java.io.IOException;
 
+/**
+ * A driver to start the Battleship server.
+ *
+ * @author Gatlin Cruz
+ * @author Tommy Meek
+ * @version December, 2020
+ */
 public class BattleServerDriver {
 
    /** The index of the command line argument specifying the port number. */
