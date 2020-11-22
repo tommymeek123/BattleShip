@@ -22,7 +22,8 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    /** The username that this connection agent is associated with */
    private String username;
 
-   private boolean joined = false;
+   /** True of this agent has joined a live game. False otherwise. */
+   private boolean joined;
 
    /**
     * Constructor.
@@ -34,7 +35,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
       this.socket = socket;
       this.out = new PrintStream(this.socket.getOutputStream());
       this.in = new Scanner(this.socket.getInputStream());
-      //this.thread = new Thread(this);
+      this.joined = false;
    }
 
    /**
@@ -43,25 +44,23 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @param message The message to be sent across the network.
     */
    public void sendMessage(String message) {
-      if(message.contains("/join") && !joined) {
+      if (message.contains("/join") && !joined) {
          this.out.println(message);
          this.username = message.substring(6);
          joined = true;
-      }
-      else if(message.contains("/join"))
+      } else if (message.contains("/join")) {
          this.out.println("Already in game");
-      else if(message.contains("/quit")) {
+      } else if (message.contains("/quit")) {
          this.out.println(message);
          try {
             this.close();
             //thread.interrupt();
-         }
-         catch (IOException ieo) {
+         } catch (IOException ieo) {
             System.err.println(ieo.getMessage());
          }
-      }
-      else
+      } else {
          this.out.println(message);
+      }
    }
 
    /**
@@ -70,7 +69,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @return True if we are connected. False otherwise.
     */
    public boolean isConnected() {
-      return this.socket.isConnected();
+      return this.joined;
    }
 
    /**
@@ -79,10 +78,8 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @throws IOException if an error occurs while closing the socket.
     */
    public void close() throws IOException {
-      //System.out.println(this.username);
       this.socket.close();
    }
-
 
    @Override
    public void run() {

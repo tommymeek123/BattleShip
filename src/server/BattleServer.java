@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A server to host a game of Battleship.
@@ -29,12 +28,12 @@ public class BattleServer implements MessageListener {
    private Game game;
 
    /** The list of active connection agents. */
-   List<ConnectionAgent> agents;
+   private ArrayList<ConnectionAgent> agents;
 
    /**
     * Constructor for a BattleServer
     *
-    * @param port The server's port number.
+    * @param port     The server's port number.
     * @param gridSize The size of the grids.
     * @throws IOException if something goes wrong creating the ServerSocket.
     */
@@ -47,7 +46,6 @@ public class BattleServer implements MessageListener {
 
    public void listen() throws IOException {
       while (!this.serverSocket.isClosed()) {
-         //System.out.println("listening");
          Socket socket = this.serverSocket.accept();
          ConnectionAgent agent = new ConnectionAgent(socket);
          Thread thread = new Thread(agent);
@@ -55,7 +53,6 @@ public class BattleServer implements MessageListener {
          this.agents.add(agent);
          thread.start();
       }
-
    }
 
    /**
@@ -76,7 +73,6 @@ public class BattleServer implements MessageListener {
     * @param source  The connection agent through which the command was received.
     */
    public void messageReceived(String message, MessageSource source) {
-
       String result = this.game.execute(message);
       if (result.contains("Invalid command")) {
          for (ConnectionAgent agent : this.agents) {
@@ -84,8 +80,7 @@ public class BattleServer implements MessageListener {
                agent.sendMessage(result);
             }
          }
-      }
-      else {
+      } else {
          this.broadcast(result);
       }
    }
@@ -99,4 +94,5 @@ public class BattleServer implements MessageListener {
       source.removeMessageListener(this);
       this.agents.remove(source);
    }
+
 }

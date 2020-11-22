@@ -12,16 +12,16 @@ import java.io.IOException;
 public class BattleServerDriver {
 
    /** The index of the command line argument specifying the port number. */
-   final static int PORT_ARG = 0;
+   private final static int PORT_ARG = 0;
 
    /** The index of the command line argument specifying the grid size. */
-   final static int SIZE_ARG = 1;
+   private final static int SIZE_ARG = 1;
 
    /** The minimum number of command line arguments. */
-   final static int MIN_ARGS = 1;
+   private final static int MIN_ARGS = 1;
 
    /** The maximum number of command line arguments. */
-   final static int MAX_ARGS = 2;
+   private final static int MAX_ARGS = 2;
 
    /**
     * Entry point into the program.
@@ -32,7 +32,8 @@ public class BattleServerDriver {
     *             board.
     */
    public static void main(String[] args) {
-      go(args);
+      BattleServerDriver driver = new BattleServerDriver();
+      driver.go(args);
    }
 
    /**
@@ -40,19 +41,28 @@ public class BattleServerDriver {
     *
     * @param args Command line arguments from main.
     */
-   private static void go(String[] args) {
-      final int DEFAULT_SIZE = 10;
-      validateArgs(args);
-      int gridSize = DEFAULT_SIZE;
+   private void go(String[] args) {
+      // Check command line arguments.
+      this.validateArgs(args);
       int port = Integer.parseInt(args[PORT_ARG]);
-      if (args.length == MAX_ARGS) {
-         gridSize = Integer.parseInt(args[SIZE_ARG]);
-      }
+      int gridSize = this.getGridSize(args);
+
+      // Start server.
+      this.makeServer(port, gridSize);
+   }
+
+   /**
+    * Creates a BattleServer and listens for incoming connections.
+    *
+    * @param port     The server's port number.
+    * @param gridSize The size of the grids.
+    */
+   private void makeServer(int port, int gridSize) {
       try {
          BattleServer server = new BattleServer(port, gridSize);
          server.listen();
-      } catch (IOException e) {
-         e.printStackTrace();
+      } catch (IOException ioe) {
+         ioe.printStackTrace();
       }
    }
 
@@ -61,20 +71,18 @@ public class BattleServerDriver {
     *
     * @param args Command line arguments to the program.
     */
-   private static void validateArgs(String[] args) {
-      final int PORT_ARG = 0;
-      final int SIZE_ARG = 1;
+   private void validateArgs(String[] args) {
       final String PORT_ERR_MSG = "Invalid port number. Should be [1024-65535]";
       final String SIZE_ERR_MSG = "Invalid grid size. Should be [5-10]";
       if (args.length < MIN_ARGS || args.length > MAX_ARGS) {
-         usage();
+         this.usage();
       }
-      if (!validatePort(args[PORT_ARG])) {
+      if (!this.validatePort(args[PORT_ARG])) {
          System.err.println(PORT_ERR_MSG);
          System.exit(1);
       }
       if (args.length == 2) {
-         if (!validateSize(args[SIZE_ARG])) {
+         if (!this.validateSize(args[SIZE_ARG])) {
             System.err.println(SIZE_ERR_MSG);
             System.exit(1);
          }
@@ -82,12 +90,20 @@ public class BattleServerDriver {
    }
 
    /**
-    * Prints a message indicating how the program should be used.
+    * Finds the appropriate grid size.
+    *
+    * @param args Command line arguments to the program.
+    * @return The grid size.
     */
-   private static void usage() {
-      final String USG_MSG = "java server.BattleServerDriver <port> [grid size]";
-      System.err.println(USG_MSG);
-      System.exit(1);
+   private int getGridSize(String[] args) {
+      final int DEFAULT_SIZE = 10;
+      int gridSize;
+      if (args.length == MAX_ARGS) {
+         gridSize = Integer.parseInt(args[SIZE_ARG]);
+      } else {
+         gridSize = DEFAULT_SIZE;
+      }
+      return gridSize;
    }
 
    /**
@@ -96,7 +112,7 @@ public class BattleServerDriver {
     * @param portStr A string that should be a valid port number.
     * @return True if the string passed is a valid port number. False otherwise.
     */
-   private static boolean validatePort(String portStr) {
+   private boolean validatePort(String portStr) {
       final int MAX_PORT  = 65535;
       final int MIN_PORT  = 1024;
       int portNum;
@@ -114,7 +130,7 @@ public class BattleServerDriver {
     * @param sizeStr A string that should be a valid grid size.
     * @return True if the string passed is a valid grid size. False otherwise.
     */
-   private static boolean validateSize(String sizeStr) {
+   private boolean validateSize(String sizeStr) {
       final int MIN_SIZE = 5;
       final int MAX_SIZE = 10;
       int sizeNum;
@@ -124,6 +140,15 @@ public class BattleServerDriver {
          return false;
       }
       return sizeNum >= MIN_SIZE && sizeNum <= MAX_SIZE;
+   }
+
+   /**
+    * Prints a message indicating how the program should be used.
+    */
+   private void usage() {
+      final String USG_MSG = "java server.BattleServerDriver <port> [grid size]";
+      System.err.println(USG_MSG);
+      System.exit(1);
    }
 
 }

@@ -315,6 +315,16 @@ public class Game {
    }
 
    /**
+    * Gets the name of the current player.
+    *
+    * @param playerNum Which player to return.
+    * @return The player at the specified position.
+    */
+   public String getCurrentPlayer(int playerNum) {
+      return this.players.get(this.current);
+   }
+
+   /**
     * Determines if the supplied String is the name of a current player.
     *
     * @param player The player name we are checking.

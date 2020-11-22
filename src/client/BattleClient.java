@@ -7,7 +7,6 @@ import common.MessageSource;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 /**
  * A client to play a game of Battleship.
@@ -32,13 +31,13 @@ public class BattleClient extends MessageSource implements MessageListener {
 
    /**
     * Constructor for a BattleClient
+    *
     * @param hostname the server the client is trying to connect to
     * @param port the port used to try to connect to the server
     * @param username the username of the client player
     */
-   public BattleClient(String hostname, int port, String username)
-                                                   throws UnknownHostException {
-      this.host = InetAddress.getByName(hostname);
+   public BattleClient(InetAddress hostname, int port, String username) {
+      this.host = hostname;
       this.port = port;
       this.username = username;
    }
@@ -52,6 +51,7 @@ public class BattleClient extends MessageSource implements MessageListener {
       Thread thread = new Thread(this.agent);
       this.agent.addMessageListener(this);
       thread.start();
+      this.send("/join " + this.username);
       //thread.interrupt();
       //this.removeMessageListener(this);
    }
@@ -79,7 +79,6 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param message the message being sent
     */
    public void send(String message) {
-      //System.out.println("Whoa there!");
       this.agent.sendMessage(message);
    }
 
@@ -90,4 +89,5 @@ public class BattleClient extends MessageSource implements MessageListener {
    public String getUsername() {
       return this.username;
    }
+
 }
