@@ -48,8 +48,16 @@ public class BattleClientDriver {
       InetAddress hostname = this.validateHost(args[HOST_ARG]);
       int port = Integer.parseInt(args[PORT_ARG]);
       String username = args[NAME_ARG];
-
       BattleClient bc = makeClient(hostname, port, username);
+      this.getInput(bc);
+   }
+
+   /**
+    * Loops to collect user input to pass to the client.
+    *
+    * @param bc The client we are collecting input for.
+    */
+   private void getInput(BattleClient bc) {
       boolean keepPlaying = true;
       Scanner input = new Scanner(System.in);
       while (keepPlaying) {

@@ -44,6 +44,11 @@ public class BattleServer implements MessageListener {
       this.agents = new ArrayList<>();
    }
 
+   /**
+    * Causes the BattleServer to listen for requests.
+    *
+    * @throws IOException if there is a problem with the socket.
+    */
    public void listen() throws IOException {
       while (!this.serverSocket.isClosed()) {
          Socket socket = this.serverSocket.accept();
