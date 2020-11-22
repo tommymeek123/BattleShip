@@ -53,7 +53,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
          this.out.println(message);
          try {
             this.close();
-            thread.interrupt();
+            //thread.interrupt();
          }
          catch (IOException ieo) {
             System.err.println(ieo.getMessage());
@@ -78,30 +78,15 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @throws IOException if an error occurs while closing the socket.
     */
    public void close() throws IOException {
-      System.out.println(this.username);
+      //System.out.println(this.username);
       this.socket.close();
    }
 
-//   @Override
-//   public void run() {
-//      this.thread = Thread.currentThread();
-//      while (this.isConnected()) {
-//         String command = null;
-//         while (!this.thread.isInterrupted()) {
-//            System.out.println("Hey there!");
-//            command = in.next();
-//            System.out.println("Hi there!");
-//         }
-//         this.notifyReceipt(command);
-//      }
-//   }
 
    @Override
    public void run() {
-      int i = 0;
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
-         //System.out.println("Hey there!");
          if (in.hasNext()) {
             String command = in.nextLine();
             this.notifyReceipt(command);
