@@ -36,12 +36,12 @@ public class BattleClientDriver {
             bc.connect();
             bc.addMessageListener(outStream);
             bc.send("/join " + username);
-            while (keepPlaying) { //TODO: fix
+            while (true) { //TODO: fix
                String command = getInput();
                //System.out.println(command);
                bc.send(command);
                if(command.contains("/quit"))
-                  keepPlaying = false;
+                  System.exit(1);
             }
          } catch (IOException e) {
             e.printStackTrace();
