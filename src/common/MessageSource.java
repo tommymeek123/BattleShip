@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class MessageSource {
    /** Observers registered to receive notifications about this subject. */
-   public List<MessageListener> messageListeners;
+   private List<MessageListener> messageListeners;
 
    /**
     * Constructs a new <code>MessageSource</code> with no registered observers.

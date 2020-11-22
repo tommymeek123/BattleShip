@@ -19,6 +19,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    /** The thread in which this agent will run. */
    private Thread thread;
 
+   /** The username that this connection agent is associated with */
    private String username;
 
    private boolean joined = false;
