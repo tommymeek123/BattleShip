@@ -31,14 +31,17 @@ public class BattleClientDriver {
 
          var outStream = new PrintStreamMessageListener(System.out);
          try {
+            boolean keepPlaying = true;
             BattleClient bc = new BattleClient(hostname, port, username);
             bc.connect();
             bc.addMessageListener(outStream);
             bc.send("/join " + username);
-            while (true) { //TODO: fix
+            while (keepPlaying) { //TODO: fix
                String command = getInput();
                //System.out.println(command);
                bc.send(command);
+               if(command.contains("/quit"))
+                  keepPlaying = false;
             }
          } catch (IOException e) {
             e.printStackTrace();

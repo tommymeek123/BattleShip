@@ -52,8 +52,8 @@ public class BattleClient extends MessageSource implements MessageListener {
       Thread thread = new Thread(this.agent);
       this.agent.addMessageListener(this);
       thread.start();
-      thread.interrupt();
-      this.removeMessageListener(this);
+      //thread.interrupt();
+      //this.removeMessageListener(this);
    }
 
    /**
