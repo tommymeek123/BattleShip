@@ -86,9 +86,12 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    public void run() {
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
-         if (in.hasNext()) {
-            String command = in.nextLine();
-            this.notifyReceipt(command);
+         StringBuilder command = new StringBuilder();
+         while (in.hasNext()) {
+            command.append(in.nextLine());
+         }
+         if (command.toString() != null) {
+            this.notifyReceipt(command.toString());
          }
       }
    }

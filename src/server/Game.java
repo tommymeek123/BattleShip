@@ -107,6 +107,7 @@ public class Game {
       } else {
          response = "Invalid command: " + command;
       }
+      System.out.println(response);
       return response;
    }
 

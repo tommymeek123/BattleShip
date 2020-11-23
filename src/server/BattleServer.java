@@ -83,6 +83,7 @@ public class BattleServer implements MessageListener {
          for (int i = 0; i < this.game.getNumPlayers(); i++) {
             if (this.agents.get(i) == source) {
                sender = this.game.getPlayerAt(i);
+               System.out.println("i = " + i + " and message = " + message);
             }
          }
       }
