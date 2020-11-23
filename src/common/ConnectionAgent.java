@@ -5,6 +5,15 @@ import java.io.PrintStream;
 import java.net.Socket;
 import java.util.Scanner;
 
+/**
+ * A ConnectionAgent facilitates communication between a client and a server
+ * using the observer pattern. The ConnectionAgent acts as 'subject' while
+ * the client and server each act as 'observers'.
+ *
+ * @author Gatlin Cruz
+ * @author Tommy Meek
+ * @version December, 2020
+ */
 public class ConnectionAgent extends MessageSource implements Runnable {
 
    /** The socket used for communication with a remote host. */
@@ -86,13 +95,27 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    public void run() {
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
-         StringBuilder command = new StringBuilder();
-         while (in.hasNext()) {
-            command.append(in.nextLine());
-         }
-         if (command.toString() != null) {
-            this.notifyReceipt(command.toString());
+         if (in.hasNext()) {
+            String command = in.nextLine();
+            this.notifyReceipt(command);
          }
       }
    }
+
+//   @Override
+//   public void run() {
+//      this.thread = Thread.currentThread();
+//      StringBuilder command = new StringBuilder();
+//      while (!this.thread.isInterrupted()) {
+//         if (in.hasNext()) {
+//            while (in.hasNextLine()) {
+//               command.append(in.nextLine());
+//               System.out.println("Hey there!");
+//            }
+//         }
+//         System.out.println("MADE IT TO THE END OF RUN");
+//         this.notifyReceipt(command.toString());
+//      }
+//   }
+
 }

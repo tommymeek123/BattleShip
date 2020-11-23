@@ -46,7 +46,7 @@ public class BattleClient extends MessageSource implements MessageListener {
     *
     */
    public void connect() throws IOException {
-      Socket socket = new Socket(host, port);
+      Socket socket = new Socket(this.host, this.port);
       this.agent = new ConnectionAgent(socket);
       Thread thread = new Thread(this.agent);
       this.agent.addMessageListener(this);
