@@ -78,9 +78,10 @@ public class Game {
     * Executes a command according to what the command is.
     *
     * @param command The command entered by a user.
+    * @param sender The player who sent the command.
     * @return The response indicating the result of the execution.
     */
-   public String execute(String command) {
+   public String execute(String command, String sender) {
       String[] commands = command.split(" ");
       String response = "";
       if (this.validateCommand(commands)) {
@@ -94,13 +95,13 @@ public class Game {
             case "/attack":
                int x = Integer.parseInt(commands[2]);
                int y = Integer.parseInt(commands[3]);
-               response = this.attack(commands[1], x, y);
+               response = this.attack(commands[1], sender, x, y);
                break;
             case "/quit":
-               response = this.quit();
+               response = this.quit(sender);
                break;
             case "/show":
-               response = this.show(commands[1]);
+               response = this.show(commands[1], sender);
                break;
          }
       } else {
@@ -213,35 +214,40 @@ public class Game {
     * Launch an attack against a location in another player's grid.
     *
     * @param victim The player against whom the attack is directed.
+    * @param sender The player who sent the command.
     * @param x The x-coordinate of the location to be attacked.
     * @param y The y-coordinate of the location to be attacked.
     * @return A string indicating what happened as a result of the attack.
     */
-   private String attack(String victim, int x, int y) {
-      String response;
+   private String attack(String victim, String sender, int x, int y) {
+      String response = "";
       if (this.inPlay) {
          String attacker = this.players.get(this.current);
-         if (attacker.equals(victim)) {
-            response = "Move Failed, player turn: " + attacker;
-         } else {
-            Grid victimsGrid = this.getGridByPlayerName(victim);
-            victimsGrid.shotsFired(x, y);
-            response = "Shots Fired at " + victim + " by " + attacker;
-            if (victimsGrid.getTotalSquares() == 0) {
-               this.players.remove(victim);
-               this.grids.remove(victimsGrid);
-               response += "\n" + victim + " has been eliminated!";
-               if (this.players.size() == 1) {
-                  response += "\nGAME OVER: " + attacker + " wins!";
-                  this.inPlay = false;
+         if (attacker.equals(sender)) {
+            if (attacker.equals(victim)) {
+               response = "Move Failed, player turn: " + attacker;
+            } else {
+               Grid victimsGrid = this.getGridByPlayerName(victim);
+               victimsGrid.shotsFired(x, y);
+               response = "Shots Fired at " + victim + " by " + attacker;
+               if (victimsGrid.getTotalSquares() == 0) {
+                  this.players.remove(victim);
+                  this.grids.remove(victimsGrid);
+                  response += "\n" + victim + " has been eliminated!";
+                  if (this.players.size() == 1) {
+                     response += "\nGAME OVER: " + attacker + " wins!";
+                     this.inPlay = false;
+                  }
+                  this.current--; // prevent bug where next player is skipped
                }
-               this.current--; // prevent bug where next player is skipped
+               this.current = (this.current + 1) % this.players.size();
+               if (this.inPlay) {
+                  String newPlayer = this.players.get(this.current);
+                  response += "\n" + newPlayer + " it is your turn";
+               }
             }
-            this.current = (this.current + 1) % this.players.size();
-            if (this.inPlay) {
-               String newPlayer = this.players.get(this.current);
-               response += "\n" + newPlayer + " it is your turn";
-            }
+         } else {
+            response = "Move Failed, player turn: " + attacker;
          }
       } else {
          response = "Play not in progress";
@@ -252,9 +258,10 @@ public class Game {
    /**
     * Forfeit the game.
     *
+    * @param sender The player who sent the command.
     * @return An indication that the player surrendered.
     */
-   private String quit() {
+   private String quit(String sender) {
       String response;
       String currentPlayer = this.players.get(this.current);
       Grid currentGrid = this.grids.get(this.current);
@@ -277,13 +284,13 @@ public class Game {
     * Display a player's current grid.
     *
     * @param player The player whose grid we want to show.
+    * @param sender The player who sent the command.
     * @return A string representation of a player's grid.
     */
-   private String show(String player) {
+   private String show(String player, String sender) {
       String response;
       if (this.inPlay) {
-         String currentPlayer = this.players.get(this.current);
-         if (currentPlayer.equals(player)) {
+         if (sender.equals(player)) {
             response = this.getGridByPlayerName(player).drawSelf();
          } else {
             response = this.getGridByPlayerName(player).drawOpponent();
@@ -322,6 +329,24 @@ public class Game {
     */
    public String getCurrentPlayer(int playerNum) {
       return this.players.get(this.current);
+   }
+
+   /**
+    * Returns the number of active player.
+    *
+    * @return the number of active players
+    */
+   public int getNumPlayers() {
+      return this.players.size();
+   }
+
+   /**
+    * Gets the turn order of the current player.
+    *
+    * @return The current turn order.
+    */
+   public int getCurrent() {
+      return this.current;
    }
 
    /**

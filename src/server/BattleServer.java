@@ -78,8 +78,17 @@ public class BattleServer implements MessageListener {
     * @param source  The connection agent through which the command was received.
     */
    public void messageReceived(String message, MessageSource source) {
-      String result = this.game.execute(message);
-      if (result.contains("Invalid command")) {
+      String sender = "";
+      if (!message.contains("/join")) {
+         for (int i = 0; i < this.game.getNumPlayers(); i++) {
+            if (this.agents.get(i) == source) {
+               sender = this.game.getPlayerAt(i);
+            }
+         }
+      }
+
+      String result = this.game.execute(message, sender);
+      if (this.isPrivate(result, message)) {
          for (ConnectionAgent agent : this.agents) {
             if (agent == source) {
                agent.sendMessage(result);
@@ -88,6 +97,20 @@ public class BattleServer implements MessageListener {
       } else {
          this.broadcast(result);
       }
+   }
+
+   /**
+    * Determines if the response from a command execution is public or private.
+    *
+    * @param result The response from a command execution.
+    * @param message The command supplied by the client.
+    * @return True if the response is private. False if it is public.
+    */
+   private boolean isPrivate(String result, String message) {
+      return result.contains("Invalid command") || message.contains("/show")
+              || result.contains("Move Failed")
+              || result.contains("Play not in progress")
+              || result.contains("Game already in progress");
    }
 
    /**
