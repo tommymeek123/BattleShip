@@ -297,13 +297,16 @@ public class Game {
     */
    private String checkForEndGame(String loser) {
       String result = "";
+      int loserIndex = this.getPlayerIndexByName(loser);
       this.grids.remove(this.getGridByPlayerName(loser));
       this.players.remove(loser);
       if (this.players.size() == 1) {
          result = "\nGAME OVER: " + this.players.get(0) + " wins!";
          this.inPlay = false;
       } else {
-         this.current--; // prevent bug where next player is skipped
+         if (loserIndex < this.current) {
+            this.current--; // prevent bug where next player is skipped
+         }
       }
       return result;
    }
