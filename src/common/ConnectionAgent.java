@@ -105,5 +105,4 @@ public class ConnectionAgent extends MessageSource implements Runnable {
          this.notifyReceipt(command);
       }
    }
-
 }

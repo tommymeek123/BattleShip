@@ -63,6 +63,9 @@ public class BattleClient extends MessageSource implements MessageListener {
     */
    public void messageReceived(String message, MessageSource source) {
       this.notifyReceipt(message);
+      if(message.contains("already in the game")) {
+         this.send("/quit");
+      }
    }
 
    /**
