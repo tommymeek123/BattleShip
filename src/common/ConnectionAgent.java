@@ -100,7 +100,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    @Override
    public void run() {
       this.thread = Thread.currentThread();
-      while (!this.thread.isInterrupted()) {
+      while (!this.thread.isInterrupted() && in.hasNextLine()) {
          String command = in.nextLine();
          this.notifyReceipt(command);
       }

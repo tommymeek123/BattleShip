@@ -89,6 +89,12 @@ public class BattleServer implements MessageListener {
       }
 
       String[] result = this.game.execute(message, sender);
+
+      // Remove client if appropriate.
+      if (result[this.game.QUIT_INDEX].equals(this.game.REMOVE)) {
+         this.sourceClosed(source);
+      }
+
       if (result[this.game.PRIVATE_INDEX].equals(this.game.PRIVATE)) {
          // Send response only to the source of the command.
          for (ConnectionAgent agent : this.agents) {
@@ -99,11 +105,6 @@ public class BattleServer implements MessageListener {
       } else {
          // Send response to all players.
          this.broadcast(result[this.game.MSG_INDEX]);
-      }
-
-      // Remove client if appropriate.
-      if (result[this.game.QUIT_INDEX].equals(this.game.REMOVE)) {
-         this.sourceClosed(source);
       }
 
       // Eliminate player if appropriate.
@@ -130,6 +131,15 @@ public class BattleServer implements MessageListener {
     * @param source The connection agent to close.
     */
    public void sourceClosed(MessageSource source) {
+      for (ConnectionAgent agent : this.agents) {
+         if (agent == source) {
+            try {
+               agent.close();
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      }
       source.removeMessageListener(this);
       this.agents.remove(source);
    }

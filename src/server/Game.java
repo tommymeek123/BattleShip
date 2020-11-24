@@ -250,10 +250,11 @@ public class Game {
    private String[] quit(String quitter) {
       String[] response = new String[NUM_RESPONSES];
       response[QUIT_INDEX] = REMOVE;
-      response[PRIVATE_INDEX] = GLOBAL;
+      response[PRIVATE_INDEX] = PRIVATE;
       response[ELIMINATE_INDEX] = NOBODY;
       response[MSG_INDEX] = "!!! " + quitter + " surrendered";
       if (this.players.contains(quitter)) {
+         response[PRIVATE_INDEX] = GLOBAL;
          response[MSG_INDEX] += this.checkForEndGame(quitter);
          if (!this.players.get(this.current).equals(quitter) && this.inPlay) {
             this.current = (this.current + 1) % this.players.size();
@@ -306,6 +307,7 @@ public class Game {
       } else {
          if (loserIndex <= this.current) {
             this.current--; // prevent bug where next player is skipped
+            this.current = Math.floorMod(this.current, this.players.size());
          }
       }
       return result;
