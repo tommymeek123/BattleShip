@@ -212,6 +212,7 @@ public class Game {
       String[] response = new String[NUM_RESPONSES];
       response[QUIT_INDEX] = STAY;
       String attacker = this.players.get(this.current);
+      response[ELIMINATE_INDEX] = NOBODY;
       if (!this.inPlay) {
          response[PRIVATE_INDEX] = PRIVATE;
          response[MSG_INDEX] = "Play not in progress";
@@ -226,7 +227,8 @@ public class Game {
          response[PRIVATE_INDEX] = GLOBAL;
          response[MSG_INDEX] = "Shots Fired at " + victim + " by " + attacker;
          if (victimsGrid.getTotalSquares() == 0) {
-            response[ELIMINATE_INDEX] = victim;
+            int eliminatedIndex = this.getPlayerIndexByName(victim);
+            response[ELIMINATE_INDEX] = Integer.toString(eliminatedIndex);
             response[MSG_INDEX] += "\n" + victim + " has been eliminated!";
             response[MSG_INDEX] += this.checkForEndGame(victim);
          }
@@ -295,8 +297,8 @@ public class Game {
     */
    private String checkForEndGame(String loser) {
       String result = "";
-      this.players.remove(loser);
       this.grids.remove(this.getGridByPlayerName(loser));
+      this.players.remove(loser);
       if (this.players.size() == 1) {
          result = "\nGAME OVER: " + this.players.get(0) + " wins!";
          this.inPlay = false;

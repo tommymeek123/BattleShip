@@ -118,9 +118,10 @@ public class BattleServer implements MessageListener {
     * @param result The result of the execute method.
     */
    private void moveToEndOfList(String[] result) {
-      String loser = result[this.game.ELIMINATE_INDEX];
-      int index = this.game.getPlayerIndexByName(loser);
-      ConnectionAgent losersAgent = this.agents.get(index);
+      int loserIndex = Integer.parseInt(result[this.game.ELIMINATE_INDEX]);
+//      String loser = result[this.game.ELIMINATE_INDEX];
+//      int index = this.game.getPlayerIndexByName(loser);
+      ConnectionAgent losersAgent = this.agents.get(loserIndex);
       this.agents.remove(losersAgent);
       this.agents.add(losersAgent);
    }
