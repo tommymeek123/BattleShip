@@ -34,6 +34,8 @@ cd BattleShip/
 mkdir out/
 javac -d out/ src/server/*.java src/client/*.java src/common/*.java
 
-running the game:
+running the server:
 java -cp out/ server.BattleServerDriver <port> [gridsize]
 
+running the client:
+java -cp out/ client.BattleClientDriver <host> <port> <username>

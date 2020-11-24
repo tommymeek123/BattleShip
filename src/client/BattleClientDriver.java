@@ -48,6 +48,8 @@ public class BattleClientDriver {
       InetAddress hostname = this.validateHost(args[HOST_ARG]);
       int port = Integer.parseInt(args[PORT_ARG]);
       String username = args[NAME_ARG];
+
+      // Start client and loop for input.
       BattleClient bc = makeClient(hostname, port, username);
       this.getInput(bc);
    }
@@ -58,13 +60,18 @@ public class BattleClientDriver {
     * @param bc The client we are collecting input for.
     */
    private void getInput(BattleClient bc) {
+      //List<String> forbiddenCommands = List.of("/join");
       boolean keepPlaying = true;
       Scanner input = new Scanner(System.in);
       while (keepPlaying) {
          String command = input.nextLine();
-         bc.send(command);
-         if (command.contains("/quit")) {
-            keepPlaying = false;
+         if (command.contains("/join")) {
+            System.out.println("Invalid command: " + command);
+         } else {
+            bc.send(command);
+            if (command.contains("/quit")) {
+               keepPlaying = false;
+            }
          }
       }
    }
@@ -85,7 +92,9 @@ public class BattleClientDriver {
       try {
          bc.connect();
       } catch (IOException ioe) {
+         System.err.println("Error connecting.\n");
          ioe.printStackTrace();
+         System.exit(1);
       }
       return bc;
    }

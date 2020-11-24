@@ -28,11 +28,11 @@ public class ConnectionAgent extends MessageSource implements Runnable {
    /** The thread in which this agent will run. */
    private Thread thread;
 
-   /** The username that this connection agent is associated with */
-   private String username;
-
-   /** True of this agent has joined a live game. False otherwise. */
-   private boolean joined;
+//   /** The username that this connection agent is associated with */
+//   private String username;
+//
+//   /** True of this agent has joined a live game. False otherwise. */
+//   private boolean joined;
 
    /**
     * Constructor.
@@ -44,7 +44,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
       this.socket = socket;
       this.out = new PrintStream(this.socket.getOutputStream());
       this.in = new Scanner(this.socket.getInputStream());
-      this.joined = false;
+      //this.joined = false;
    }
 
    /**
@@ -79,7 +79,7 @@ public class ConnectionAgent extends MessageSource implements Runnable {
     * @return True if we are connected. False otherwise.
     */
    public boolean isConnected() {
-      return this.joined;
+      return this.socket.isConnected();
    }
 
    /**
@@ -91,31 +91,19 @@ public class ConnectionAgent extends MessageSource implements Runnable {
       this.socket.close();
    }
 
+   /**
+    * This agent will listen for messages from it's counterpart on a remote
+    * host. When another agent whose socket is connected to this one's calls
+    * its sendMessage method, that message will be received here. Once the
+    * message is received, all observers will be notified.
+    */
    @Override
    public void run() {
       this.thread = Thread.currentThread();
       while (!this.thread.isInterrupted()) {
-         if (in.hasNext()) {
-            String command = in.nextLine();
-            this.notifyReceipt(command);
-         }
+         String command = in.nextLine();
+         this.notifyReceipt(command);
       }
    }
-
-//   @Override
-//   public void run() {
-//      this.thread = Thread.currentThread();
-//      StringBuilder command = new StringBuilder();
-//      while (!this.thread.isInterrupted()) {
-//         if (in.hasNext()) {
-//            while (in.hasNextLine()) {
-//               command.append(in.nextLine());
-//               System.out.println("Hey there!");
-//            }
-//         }
-//         System.out.println("MADE IT TO THE END OF RUN");
-//         this.notifyReceipt(command.toString());
-//      }
-//   }
 
 }

@@ -75,43 +75,54 @@ public class BattleServer implements MessageListener {
     * Attempts to execute the given command.
     *
     * @param message The command received from the client.
-    * @param source  The connection agent through which the command was received.
+    * @param source The connection agent through which the command was received.
     */
    public void messageReceived(String message, MessageSource source) {
       String sender = "";
-      if (!message.contains("/join")) {
+      if (!message.contains("/join")) { // Prevents index out of bounds error
+         // Find the name of the player who sent the message.
          for (int i = 0; i < this.game.getNumPlayers(); i++) {
             if (this.agents.get(i) == source) {
                sender = this.game.getPlayerAt(i);
-               System.out.println("i = " + i + " and message = " + message);
             }
          }
       }
 
-      String result = this.game.execute(message, sender);
-      if (this.isPrivate(result, message)) {
+      String[] result = this.game.execute(message, sender);
+      if (result[this.game.PRIVATE_INDEX].equals(this.game.PRIVATE)) {
+         // Send response only to the source of the command.
          for (ConnectionAgent agent : this.agents) {
             if (agent == source) {
-               agent.sendMessage(result);
+               agent.sendMessage(result[this.game.MSG_INDEX]);
             }
          }
       } else {
-         this.broadcast(result);
+         // Send response to all players.
+         this.broadcast(result[this.game.MSG_INDEX]);
+      }
+
+      // Remove client if appropriate.
+      if (result[this.game.QUIT_INDEX].equals(this.game.REMOVE)) {
+         this.sourceClosed(source);
+      }
+
+      // Eliminate player if appropriate.
+      if (!result[this.game.ELIMINATE_INDEX].equals(this.game.NOBODY)) {
+         this.moveToEndOfList(result);
       }
    }
 
    /**
-    * Determines if the response from a command execution is public or private.
+    * Move connection agent of the eliminated player to end of the list.
     *
-    * @param result The response from a command execution.
-    * @param message The command supplied by the client.
-    * @return True if the response is private. False if it is public.
+    * @param result The result of the execute method.
     */
-   private boolean isPrivate(String result, String message) {
-      return result.contains("Invalid command") || message.contains("/show")
-              || result.contains("Move Failed")
-              || result.contains("Play not in progress")
-              || result.contains("Game already in progress");
+   private void moveToEndOfList(String[] result) {
+      String loser = result[this.game.ELIMINATE_INDEX];
+      int index = this.game.getPlayerIndexByName(loser);
+      ConnectionAgent losersAgent = this.agents.get(index);
+      this.agents.remove(losersAgent);
+      this.agents.add(losersAgent);
    }
 
    /**

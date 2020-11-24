@@ -14,6 +14,36 @@ import java.util.Random;
  */
 public class Game {
 
+   /** The number of responses returned by the execute method. */
+   final int NUM_RESPONSES = 4;
+
+   /** The index that indicates if the sender should be removed. */
+   final int QUIT_INDEX = 0;
+
+   /** The index that indicates if the response should be global or private. */
+   final int PRIVATE_INDEX = 1;
+
+   /** The index that contains the contents of the response message. */
+   final int MSG_INDEX = 2;
+
+   /** The index that indicates if a player was eliminated. */
+   final int ELIMINATE_INDEX = 3;
+
+   /** Flag indicating the response message is private. */
+   final String PRIVATE = "p";
+
+   /** Flag indicating the response message is global. */
+   final String GLOBAL = "g";
+
+   /** Flag indicating the sender should be removed from the server. */
+   final String REMOVE = "r";
+
+   /** Flag indicating the sender should not be removed from the server. */
+   final String STAY = "";
+
+   /** Flag indicating no player was eliminated. */
+   final String NOBODY = "";
+
    /** The size of the grids in this game. */
    private int size;
 
@@ -79,11 +109,16 @@ public class Game {
     *
     * @param command The command entered by a user.
     * @param sender The player who sent the command.
-    * @return The response indicating the result of the execution.
+    * @return An array of Strings. Index 0 is a flag indicating if the user
+    *         that sent the message should be removed. "r" means remove them.
+    *         Empty string means do not. Index 1 is a flag indicating if the
+    *         response is global or private. "g" means global. "p" means
+    *         private. Index 2 is the response indicating the result of the
+    *         execution. Index 3 names a player who may have been eliminated.
     */
-   public String execute(String command, String sender) {
+   public String[] execute(String command, String sender) {
       String[] commands = command.split(" ");
-      String response = "";
+      String[] response = new String[NUM_RESPONSES];
       if (this.validateCommand(commands)) {
          switch (commands[0]) {
             case "/join":
@@ -105,10 +140,170 @@ public class Game {
                break;
          }
       } else {
-         response = "Invalid command: " + command;
+         response[QUIT_INDEX] = STAY;
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Invalid command: " + command;
+         response[ELIMINATE_INDEX] = NOBODY;
       }
-      System.out.println(response);
       return response;
+   }
+
+   /**
+    * Adds a new player to this game and creates a new grid for that player.
+    *
+    * @param player The new player's name.
+    * @return A string indicating what happened as a result of the command.
+    */
+   public String[] join(String player) {
+      String[] response = new String[NUM_RESPONSES];
+      response[ELIMINATE_INDEX] = NOBODY;
+      if (this.players.contains(player)) {
+         response[QUIT_INDEX] = REMOVE;
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = player + " is already in the game.";
+      } else if (this.inPlay) {
+         response[QUIT_INDEX] = REMOVE;
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Game already in progress";
+      } else {
+         this.grids.add(new Grid(this.size, this.numShips));
+         this.players.add(player);
+         response[QUIT_INDEX] = STAY;
+         response[PRIVATE_INDEX] = GLOBAL;
+         response[MSG_INDEX] = "!!! " + player + " has joined";
+      }
+      return response;
+   }
+
+   /**
+    * Initiates a game of Battleship.
+    *
+    * @return A string indicating what happened as a result of the command.
+    */
+   private String[] play() {
+      String[] response = new String[NUM_RESPONSES];
+      response[QUIT_INDEX] = STAY;
+      response[ELIMINATE_INDEX] = NOBODY;
+      if (this.inPlay) {
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Game already in progress";
+      } else if (this.players.size() < 2) {
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Not enough players to play the game";
+      } else {
+         this.inPlay = true;
+         response[PRIVATE_INDEX] = GLOBAL;
+         response[MSG_INDEX] = "The game begins\n" + this.players.get(0) +
+                               " it is your turn";
+      }
+      return response;
+   }
+
+   /**
+    * Launch an attack against a location in another player's grid.
+    *
+    * @param victim The player against whom the attack is directed.
+    * @param sender The player who sent the command.
+    * @param x The x-coordinate of the location to be attacked.
+    * @param y The y-coordinate of the location to be attacked.
+    * @return A string indicating what happened as a result of the attack.
+    */
+   private String[] attack(String victim, String sender, int x, int y) {
+      String[] response = new String[NUM_RESPONSES];
+      response[QUIT_INDEX] = STAY;
+      String attacker = this.players.get(this.current);
+      if (!this.inPlay) {
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Play not in progress";
+         response[ELIMINATE_INDEX] = NOBODY;
+      } else if (!attacker.equals(sender) || sender.equals(victim)) {
+         response[PRIVATE_INDEX] = PRIVATE;
+         response[MSG_INDEX] = "Move Failed, player turn: " + attacker;
+         response[ELIMINATE_INDEX] = NOBODY;
+      } else {
+         Grid victimsGrid = this.getGridByPlayerName(victim);
+         victimsGrid.shotsFired(x, y);
+         response[PRIVATE_INDEX] = GLOBAL;
+         response[MSG_INDEX] = "Shots Fired at " + victim + " by " + attacker;
+         if (victimsGrid.getTotalSquares() == 0) {
+            response[ELIMINATE_INDEX] = victim;
+            response[MSG_INDEX] += "\n" + victim + " has been eliminated!";
+            response[MSG_INDEX] += this.checkForEndGame(victim);
+         }
+         this.current = (this.current + 1) % this.players.size();
+         if (this.inPlay) {
+            String newPlayer = this.players.get(this.current);
+            response[MSG_INDEX] += "\n" + newPlayer + " it is your turn";
+         }
+      }
+      return response;
+   }
+
+   /**
+    * Forfeit the game.
+    *
+    * @param quitter The player who sent the command.
+    * @return An indication that the player surrendered.
+    */
+   private String[] quit(String quitter) {
+      String[] response = new String[NUM_RESPONSES];
+      response[QUIT_INDEX] = REMOVE;
+      response[PRIVATE_INDEX] = GLOBAL;
+      response[ELIMINATE_INDEX] = NOBODY;
+      response[MSG_INDEX] = "!!! " + quitter + " surrendered";
+      if (this.players.contains(quitter)) {
+         response[MSG_INDEX] += this.checkForEndGame(quitter);
+         this.current = (this.current + 1) % this.players.size();
+         if (this.inPlay) {
+            String newPlayer = this.players.get(this.current);
+            response[MSG_INDEX] += "\n" + newPlayer + " it is your turn";
+         }
+      }
+      return response;
+   }
+
+   /**
+    * Display a player's current grid.
+    *
+    * @param player The player whose grid we want to show.
+    * @param sender The player who sent the command.
+    * @return A string representation of a player's grid.
+    */
+   private String[] show(String player, String sender) {
+      String[] response = new String[NUM_RESPONSES];
+      response[QUIT_INDEX] = STAY;
+      response[PRIVATE_INDEX] = PRIVATE;
+      response[ELIMINATE_INDEX] = NOBODY;
+      if (this.inPlay) {
+         if (sender.equals(player)) {
+            response[MSG_INDEX] = this.getGridByPlayerName(player).drawSelf();
+         } else {
+            response[MSG_INDEX]=this.getGridByPlayerName(player).drawOpponent();
+         }
+      } else {
+         response[MSG_INDEX] = "Play not in progress";
+      }
+      return response;
+   }
+
+   /**
+    * Determines if the game is at an end. If so, it returns an appropriate
+    * message indicating the winner.
+    *
+    * @param loser A player who recently left the game.
+    * @return A string that may indicate a winner. If not, an empty string.
+    */
+   private String checkForEndGame(String loser) {
+      String result = "";
+      this.players.remove(loser);
+      this.grids.remove(this.getGridByPlayerName(loser));
+      if (this.players.size() == 1) {
+         result = "\nGAME OVER: " + this.players.get(0) + " wins!";
+         this.inPlay = false;
+      } else {
+         this.current--; // prevent bug where next player is skipped
+      }
+      return result;
    }
 
    /**
@@ -172,144 +367,24 @@ public class Game {
    }
 
    /**
-    * Adds a new player to this game and creates a new grid for that player.
-    *
-    * @param player The new player's name.
-    * @return A string indicating what happened as a result of the command.
-    */
-   public String join(String player) {
-      String response;
-      if (this.inPlay) {
-         response = "Game already in progress";
-      } else {
-         if (!this.players.contains(player)) {
-            this.grids.add(new Grid(this.size, this.numShips));
-            this.players.add(player);
-            response = "!!! " + player + " has joined";
-         } else {
-            response = player + " is already in the game.";
-         }
-      }
-      return response;
-   }
-
-   /**
-    * Initiates a game of Battleship.
-    *
-    * @return A string indicating what happened as a result of the command.
-    */
-   private String play() {
-      String response;
-      if (this.inPlay) {
-         response = "Game already in progress";
-      } else if (this.players.size() < 2) {
-         response = "Not enough players to play the game";
-      } else {
-         this.inPlay = true;
-         response = "The game begins\n" +this.players.get(0)+" it is your turn";
-      }
-      return response;
-   }
-
-   /**
-    * Launch an attack against a location in another player's grid.
-    *
-    * @param victim The player against whom the attack is directed.
-    * @param sender The player who sent the command.
-    * @param x The x-coordinate of the location to be attacked.
-    * @param y The y-coordinate of the location to be attacked.
-    * @return A string indicating what happened as a result of the attack.
-    */
-   private String attack(String victim, String sender, int x, int y) {
-      String response = "";
-      if (this.inPlay) {
-         String attacker = this.players.get(this.current);
-         if (attacker.equals(sender)) {
-            if (attacker.equals(victim)) {
-               response = "Move Failed, player turn: " + attacker;
-            } else {
-               Grid victimsGrid = this.getGridByPlayerName(victim);
-               victimsGrid.shotsFired(x, y);
-               response = "Shots Fired at " + victim + " by " + attacker;
-               if (victimsGrid.getTotalSquares() == 0) {
-                  this.players.remove(victim);
-                  this.grids.remove(victimsGrid);
-                  response += "\n" + victim + " has been eliminated!";
-                  if (this.players.size() == 1) {
-                     response += "\nGAME OVER: " + attacker + " wins!";
-                     this.inPlay = false;
-                  }
-                  this.current--; // prevent bug where next player is skipped
-               }
-               this.current = (this.current + 1) % this.players.size();
-               if (this.inPlay) {
-                  String newPlayer = this.players.get(this.current);
-                  response += "\n" + newPlayer + " it is your turn";
-               }
-            }
-         } else {
-            response = "Move Failed, player turn: " + attacker;
-         }
-      } else {
-         response = "Play not in progress";
-      }
-      return response;
-   }
-
-   /**
-    * Forfeit the game.
-    *
-    * @param sender The player who sent the command.
-    * @return An indication that the player surrendered.
-    */
-   private String quit(String sender) {
-      String response;
-      String currentPlayer = this.players.get(this.current);
-      Grid currentGrid = this.grids.get(this.current);
-      this.players.remove(currentPlayer);
-      this.grids.remove(currentGrid);
-      response = "!!! " + currentPlayer + " surrendered";
-      if (this.players.size() == 1) {
-         response += "\nGAME OVER: " + this.players.get(0) + " wins!";
-         this.inPlay = false;
-      }
-      this.current %= this.players.size();
-      if (this.inPlay) {
-         String newPlayer = this.players.get(this.current);
-         response += "\n" + newPlayer + " it is your turn";
-      }
-      return response;
-   }
-
-   /**
-    * Display a player's current grid.
-    *
-    * @param player The player whose grid we want to show.
-    * @param sender The player who sent the command.
-    * @return A string representation of a player's grid.
-    */
-   private String show(String player, String sender) {
-      String response;
-      if (this.inPlay) {
-         if (sender.equals(player)) {
-            response = this.getGridByPlayerName(player).drawSelf();
-         } else {
-            response = this.getGridByPlayerName(player).drawOpponent();
-         }
-      } else {
-         response = "Play not in progress";
-      }
-      return response;
-   }
-
-   /**
     * Finds the grid belonging to the specified player.
     *
     * @param player The name of the player whose grid we want.
     * @return The grid belonging to that player.
     */
    private Grid getGridByPlayerName(String player) {
+      System.out.println(player + " " + this.players.get(0)); //TODO: wtf
       return this.grids.get(this.players.indexOf(player));
+   }
+
+   /**
+    * Finds the turn order of the player whose name is supplied.
+    *
+    * @param player The name of the player whose index we want.
+    * @return The turn order of that player.
+    */
+   public int getPlayerIndexByName(String player) {
+      return this.players.indexOf(player);
    }
 
    /**
