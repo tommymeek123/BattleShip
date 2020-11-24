@@ -43,7 +43,9 @@ public class BattleClient extends MessageSource implements MessageListener {
    }
 
    /**
+    * Connects this client to a server by creating a connection agent.
     *
+    * @throws IOException if something goes wrong in the connection process.
     */
    public void connect() throws IOException {
       Socket socket = new Socket(this.host, this.port);
@@ -52,8 +54,6 @@ public class BattleClient extends MessageSource implements MessageListener {
       this.agent.addMessageListener(this);
       thread.start();
       this.send("/join " + this.username);
-      //thread.interrupt();
-      //this.removeMessageListener(this);
    }
 
    /**
@@ -80,14 +80,6 @@ public class BattleClient extends MessageSource implements MessageListener {
     */
    public void send(String message) {
       this.agent.sendMessage(message);
-   }
-
-   /**agent.run();
-    * Used to get the username
-    * @return the username
-    */
-   public String getUsername() {
-      return this.username;
    }
 
 }

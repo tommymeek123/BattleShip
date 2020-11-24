@@ -255,8 +255,8 @@ public class Game {
       response[MSG_INDEX] = "!!! " + quitter + " surrendered";
       if (this.players.contains(quitter)) {
          response[MSG_INDEX] += this.checkForEndGame(quitter);
-         this.current = (this.current + 1) % this.players.size();
-         if (this.inPlay) {
+         if (!this.players.get(this.current).equals(quitter) && this.inPlay) {
+            this.current = (this.current + 1) % this.players.size();
             String newPlayer = this.players.get(this.current);
             response[MSG_INDEX] += "\n" + newPlayer + " it is your turn";
          }
@@ -304,7 +304,7 @@ public class Game {
          result = "\nGAME OVER: " + this.players.get(0) + " wins!";
          this.inPlay = false;
       } else {
-         if (loserIndex < this.current) {
+         if (loserIndex <= this.current) {
             this.current--; // prevent bug where next player is skipped
          }
       }
@@ -378,7 +378,6 @@ public class Game {
     * @return The grid belonging to that player.
     */
    private Grid getGridByPlayerName(String player) {
-      System.out.println(player + " " + this.players.get(0)); //TODO: wtf
       return this.grids.get(this.players.indexOf(player));
    }
 
@@ -405,10 +404,9 @@ public class Game {
    /**
     * Gets the name of the current player.
     *
-    * @param playerNum Which player to return.
     * @return The player at the specified position.
     */
-   public String getCurrentPlayer(int playerNum) {
+   public String getCurrentPlayer() {
       return this.players.get(this.current);
    }
 
