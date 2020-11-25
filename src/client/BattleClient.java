@@ -65,10 +65,12 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param source  The source from which this message originated (if needed).
     */
    public void messageReceived(String message, MessageSource source) {
-      this.notifyReceipt(message);
+      System.out.println(message);
       if(message.contains("already in the game") || message.contains("Game already in progress")) {
          this.ready = false;
       }
+      this.notifyReceipt(message);
+      System.out.println(message);
    }
 
 
