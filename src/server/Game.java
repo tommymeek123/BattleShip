@@ -252,8 +252,9 @@ public class Game {
       response[QUIT_INDEX] = REMOVE;
       response[PRIVATE_INDEX] = PRIVATE;
       response[ELIMINATE_INDEX] = NOBODY;
-      response[MSG_INDEX] = "!!! " + quitter + " surrendered";
+      response[MSG_INDEX] = NOBODY;
       if (this.players.contains(quitter)) {
+         response[MSG_INDEX] += "!!! " + quitter + " surrendered";
          String currentPlayer = this.players.get(this.current);
          response[PRIVATE_INDEX] = GLOBAL;
          if (this.inPlay) {

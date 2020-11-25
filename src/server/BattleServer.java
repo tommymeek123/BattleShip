@@ -93,6 +93,13 @@ public class BattleServer implements MessageListener {
 
       // Remove client if appropriate.
       if (result[this.game.QUIT_INDEX].equals(this.game.REMOVE)) {
+         if (result[this.game.PRIVATE_INDEX].equals(this.game.PRIVATE)) {
+            for (ConnectionAgent agent : this.agents) {
+               if (agent == source) {
+                  agent.sendMessage(result[this.game.MSG_INDEX]);
+               }
+            }
+         }
          this.sourceClosed(source);
       }
 

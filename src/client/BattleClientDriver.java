@@ -60,7 +60,6 @@ public class BattleClientDriver {
     * @param bc The client we are collecting input for.
     */
    private void getInput(BattleClient bc) {
-      //List<String> forbiddenCommands = List.of("/join");
       boolean keepPlaying = true;
       Scanner input = new Scanner(System.in);
       while (keepPlaying) {
