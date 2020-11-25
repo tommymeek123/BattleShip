@@ -26,6 +26,8 @@ public class BattleClient extends MessageSource implements MessageListener {
    /** The username of the client */
    private String username;
 
+   private boolean ready;
+
    /** Connection agent used to communicate with the sever. */
    private ConnectionAgent agent;
 
@@ -40,6 +42,7 @@ public class BattleClient extends MessageSource implements MessageListener {
       this.host = hostname;
       this.port = port;
       this.username = username;
+      this.ready = true;
    }
 
    /**
@@ -63,10 +66,11 @@ public class BattleClient extends MessageSource implements MessageListener {
     */
    public void messageReceived(String message, MessageSource source) {
       this.notifyReceipt(message);
-      if(message.contains("already in the game")) {
-         this.send("/quit");
+      if(message.contains("already in the game") || message.contains("Game already in progress")) {
+         this.ready = false;
       }
    }
+
 
    /**
     * Used to notify observers that the subject will not receive new messages;
@@ -83,6 +87,10 @@ public class BattleClient extends MessageSource implements MessageListener {
     */
    public void send(String message) {
       this.agent.sendMessage(message);
+   }
+
+   public boolean get_ready() {
+      return this.ready;
    }
 
 }
