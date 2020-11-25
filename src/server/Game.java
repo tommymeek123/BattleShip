@@ -254,12 +254,18 @@ public class Game {
       response[ELIMINATE_INDEX] = NOBODY;
       response[MSG_INDEX] = "!!! " + quitter + " surrendered";
       if (this.players.contains(quitter)) {
+         String currentPlayer = this.players.get(this.current);
          response[PRIVATE_INDEX] = GLOBAL;
-         response[MSG_INDEX] += this.checkForEndGame(quitter);
-         if (!this.players.get(this.current).equals(quitter) && this.inPlay) {
-            this.current = (this.current + 1) % this.players.size();
-            String newPlayer = this.players.get(this.current);
-            response[MSG_INDEX] += "\n" + newPlayer + " it is your turn";
+         if (this.inPlay) {
+            response[MSG_INDEX] += this.checkForEndGame(quitter);
+            if (currentPlayer.equals(quitter)) {
+               this.current++;
+               this.current = Math.floorMod(this.current, this.players.size());
+            }
+            if (inPlay) {
+               String newPlayer = this.players.get(this.current);
+               response[MSG_INDEX] += "\n" + newPlayer + " it is your turn";
+            }
          }
       }
       return response;
