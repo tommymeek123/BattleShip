@@ -146,7 +146,7 @@ public class BattleServerDriver {
     * Prints a message indicating how the program should be used.
     */
    private void usage() {
-      final String USG_MSG = "java server.BattleServerDriver <port> [grid size]";
+      final String USG_MSG ="java server.BattleServerDriver <port> [grid size]";
       System.err.println(USG_MSG);
       System.exit(1);
    }

@@ -28,7 +28,7 @@ public class Grid {
    private List<Ship> ships;
 
    /**
-    * Constructor.
+    * Constructor for a Grid.
     *
     * @param size The size of the square grid.
     */
@@ -69,7 +69,7 @@ public class Grid {
          int i = rand.nextInt(this.size);
          int j = rand.nextInt(this.size);
          int shipId = rand.nextInt(SHIP_TYPES) + 1; // between 1 and SHIP_TYPES
-         boolean direction = rand.nextBoolean(); // true: vertical. false: horiz
+         boolean direction = rand.nextBoolean();//true: vertical. false: horiznt
          Ship ship = Ship.getById(shipId);
 
          // place vertically
