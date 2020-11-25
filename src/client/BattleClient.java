@@ -26,6 +26,7 @@ public class BattleClient extends MessageSource implements MessageListener {
    /** The username of the client */
    private String username;
 
+   /** Tells is the client is ready to connect to the server */
    private boolean ready;
 
    /** Connection agent used to communicate with the sever. */
@@ -65,12 +66,10 @@ public class BattleClient extends MessageSource implements MessageListener {
     * @param source  The source from which this message originated (if needed).
     */
    public void messageReceived(String message, MessageSource source) {
-      System.out.println(message);
       if(message.contains("already in the game") || message.contains("Game already in progress")) {
          this.ready = false;
       }
       this.notifyReceipt(message);
-      System.out.println(message);
    }
 
 
@@ -91,7 +90,11 @@ public class BattleClient extends MessageSource implements MessageListener {
       this.agent.sendMessage(message);
    }
 
-   public boolean get_ready() {
+   /**
+    * Gets the isReady field
+    * @return true if isReady, false otherwise
+    */
+   public boolean getReady() {
       return this.ready;
    }
 

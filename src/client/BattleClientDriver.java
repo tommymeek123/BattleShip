@@ -69,7 +69,7 @@ public class BattleClientDriver {
             System.out.println("Invalid command: " + command);
          } else {
             bc.send(command);
-            if (command.contains("/quit") || !bc.get_ready()) {
+            if (command.contains("/quit") || !bc.getReady()) {
                keepPlaying = false;
             }
          }
