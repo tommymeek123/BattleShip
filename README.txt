@@ -4,8 +4,8 @@ November 2020
 Project 3 "BattleShip"
 Gatlin Cruz and Tommy Meek
 
-A classic game of Battleship. Multiple players are allowed. Players attack 
-their opponents' grids in hopes of eleminating rival armadas. The last player 
+A classic game of Battleship. Multiple players are allowed. Players attack
+their opponents' grids in hopes of eleminating rival armadas. The last player
 standing wins! A list of commands is below:
 
 '/play' to start the game once at least 2 players have joined.
@@ -14,16 +14,14 @@ standing wins! A list of commands is below:
 
 '/quit' to surrender.
 
-'/show <username>' to display a player's grid to the console. If the player 
-shows herself, she will see all her ships. If a player shows an enemy, she 
-only sees hits and misses.
+'/show <username>' to display a player's grid to the console. If the player
+shows herself, she will see all her ships. If a player shows an enemy, she
+only sees hits and misses. The '@' symbol represents a hit and the 'X' symbol
+represents a miss.
 
 
 
 usage:
-
-extraction:
-tar -xzvf battleship.tar.gz
 
 compilation:
 cd BattleShip/
